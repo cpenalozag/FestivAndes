@@ -570,6 +570,37 @@ public class FestivAndesMaster {
 		}
 		return rs;
 	}
+	public ArrayList<Recibo> registrarAbono(Long idCliente, CompraBoleta[]cbs) throws Exception {
+		DAOCliente daoCliente = new DAOCliente();
+		ArrayList<Recibo> rs = new ArrayList<>();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoCliente.setConn(conn);
+			rs = daoCliente.registrarAbono(idCliente,cbs);
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoCliente.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return rs;
+		
+	}
 	public ArrayList<ReporteFuncion> generarReporteFuncion(Long idFuncion, Long idEspectaculo)throws Exception {
 		DAOFuncion daoFuncion = new DAOFuncion();
 		ArrayList<ReporteFuncion> reportes = new ArrayList<>();
