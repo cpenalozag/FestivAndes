@@ -1,2 +1,2 @@
-# java-server
-Basic REST/JDBC server based on RedHat Wildfly
+# FestivAndes
+Aplicación transaccional para el manejo de un sistema de ventas de un festival.
