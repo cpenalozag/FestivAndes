@@ -425,7 +425,8 @@ public class DAOCliente {
 			}
 			else{
 				Double precio = Double.parseDouble(rs.getString("PRECIO"));
-				
+				Double precioNuevo = precio * 0.8;
+				recibo.setPrecio(precioNuevo);
 			}
 			
 			recibo.setFuncion(de.obtenerFuncion(idEspectaculo, idFuncion, conn));
@@ -505,7 +506,12 @@ public class DAOCliente {
 					if (rs4.next()){
 						int numBoleta = darNumeroBoleta();
 						String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
-						String insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"')";
+						String insert2 = "";
+						if(abonada.equals("f")){
+							insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f')";
+						}else{
+							insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t')";
+						}
 						String insert3 ="";
 						if (idCliente!=0){
 							insert3 = "Insert into BOLETA_DETALLE (ID,IDCLIENTE,ESCLIENTE) values ('"+numBoleta+"','"+idCliente+"','t')";
@@ -552,7 +558,7 @@ public class DAOCliente {
 		for(int i =0; i< cbs.length; i++){
 			recibos.add(registrarCompra(idCliente, cbs[i].getIdFuncion(), cbs[i].getIdEspectaculo(), cbs[i].getIdSilla(), cbs[i].getIdSitio(), "t"));
 		}
-		return null;
+		return recibos;
 	}
 
 }

@@ -172,4 +172,21 @@ public class ClienteServices {
 		return Response.status(500).entity(rs).build();
 	}
 	
+	@POST
+	@Path("{idCliente}/abonar")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response registrarAbono(@PathParam("idCliente")Long idCliente, CompraBoleta[] cbs){
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		ArrayList<Recibo> rs = new ArrayList<>();
+		try{
+			rs = tm.registrarAbono(idCliente,cbs);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(500).entity(rs).build();
+	}
+	
+	
 }
