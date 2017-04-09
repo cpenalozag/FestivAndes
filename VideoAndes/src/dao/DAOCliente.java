@@ -319,7 +319,24 @@ public class DAOCliente {
 		return si;
 	}
 
+	private boolean funcionRealizada(Long idFuncion, Long idEspectaculo) throws SQLException{
+		String sql = "SELECT REALIZADA FROM FUNCION WHERE ID='"+idFuncion+"' AND IDESPECTACULO = '"+idEspectaculo+"'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()){
+			String resp = rs.getString("REALIZADA");
+			if (resp.equals("t")){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public Recibo registrarCompra(Long idCliente, Long idFuncion, Long idEspectaculo, Long idSilla, Long idSitio, String abonada) throws Exception{
+		if (funcionRealizada(idFuncion, idEspectaculo)){
+			throw new Exception("La función ya fue realizada.");
+		}
 		Silla silla = obtenerSilla(idSilla, idFuncion, idEspectaculo, idSitio);
 		Recibo recibo = new Recibo();
 		String sql = "SELECT * FROM SILLA "
@@ -343,8 +360,8 @@ public class DAOCliente {
 			recibo.setFuncion(de.obtenerFuncion(idEspectaculo, idFuncion, conn));
 
 			recibo.setSilla(silla);
-			
-			
+
+
 			boolean numerada = rs.getString("NUMERADA").equals("t");
 			if (numerada){
 
@@ -356,9 +373,9 @@ public class DAOCliente {
 					String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
 					String insert2 = "";
 					if(abonada.equals("f")){
-						insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f', 'f')";
+						insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA, ASISTENCIA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f', 'f', 'f')";
 					}else{
-						insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t', 'f')";
+						insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA, ASISTENCIA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t', 'f', 'f')";
 					}
 					String insert3 ="";
 					if (idCliente!=0){
@@ -410,9 +427,9 @@ public class DAOCliente {
 						String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
 						String insert2 = "";
 						if(abonada.equals("f")){
-							insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f', 'f')";
+							insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA, ASISTENCIA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f', 'f', 'f')";
 						}else{
-							insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t', 'f')";
+							insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA, ASISTENCIA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t', 'f', 'f')";
 						}
 						String insert3 ="";
 						if (idCliente!=0){
@@ -464,7 +481,7 @@ public class DAOCliente {
 		}
 		return recibos;
 	}
-	
+
 	private boolean verificarFechaDevolucion(Long idBoleta) throws SQLException, Exception{
 		String sql = "SELECT * FROM BOLETA NATURAL JOIN BOLETA_DETALLE "
 				+ "NATURAL JOIN (SELECT ID AS IDFUNCION, IDESPECTACULO, DIA FROM FUNCION) "
@@ -473,14 +490,17 @@ public class DAOCliente {
 		recursos.add(ps);
 		ResultSet rs = ps.executeQuery();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-		
+
 		Date date = new Date();
 		if (rs.next()){
 			String dateInString = rs.getString("DIA");
 			date = sdf.parse(dateInString);
 		}
-		
+
 		Date actual = new Date();
+		if (date.getTime()-actual.getTime()<=0){
+			throw new Exception("La función ya fue realizada.");
+		}
 		if (date.getTime()-actual.getTime()>=432000000){
 			return true;
 		}
@@ -488,8 +508,9 @@ public class DAOCliente {
 	}
 
 	public NotaDebito devolverBoleta(Long idBoleta, Long idCliente) throws Exception{
+
 		NotaDebito devuelta = new NotaDebito();
-		
+
 		if (!verificarFechaDevolucion(idBoleta)){
 			throw new Exception ("No puede devolver la boleta menos de 5 días antes de la función.");
 		}
@@ -527,7 +548,7 @@ public class DAOCliente {
 		return devuelta;
 
 	}
-	
+
 	private Date fechaInicioFestival() throws Exception{
 		Date date = new Date();
 		String sql = "SELECT MIN(TO_DATE (DIA, 'mm/dd/yy')) AS FECHA FROM FUNCION";
@@ -547,17 +568,17 @@ public class DAOCliente {
 
 	private boolean verificarFechaDevolucionAbonamiento() throws Exception{
 		Date date = fechaInicioFestival();
-		
+
 		Date actual = new Date();
 		if (date.getTime()-actual.getTime()>=1814400000){
 			return true;
 		}
 		return false;
 	}
-	
+
 	public ArrayList<NotaDebito> devolverAbonamiento (Long idCliente) throws Exception, Exception{
 		ArrayList<NotaDebito> devoluciones = new ArrayList<>();
-		
+
 		if (!verificarFechaDevolucionAbonamiento()){
 			throw new Exception("No puede devolver el abonamiento menos de 3 semanas antes de la función.");
 		}
