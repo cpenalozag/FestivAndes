@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.sun.security.ntlm.Client;
@@ -463,8 +466,26 @@ public class DAOCliente {
 		return recibos;
 	}
 	
-	private boolean verificarFechaDevolucion(Long idBoleta){
+	private boolean verificarFechaDevolucion(Long idBoleta) throws SQLException, Exception{
+		String sql = "SELECT * FROM BOLETA NATURAL JOIN BOLETA_DETALLE "
+				+ "NATURAL JOIN (SELECT ID AS IDFUNCION, IDESPECTACULO, DIA FROM FUNCION) "
+				+ "WHERE ID = '"+idBoleta+"'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
 		
+		Date date = new Date();
+		if (rs.next()){
+			String dateInString = rs.getString("DIA");
+			date = sdf.parse(dateInString);
+		}
+		
+		Date actual = new Date();
+		if (date.getTime()-actual.getTime()>=432000000){
+			return true;
+		}
+		return false;
 	}
 
 	public NotaDebito devolverBoleta(Long idBoleta, Long idCliente) throws Exception{
