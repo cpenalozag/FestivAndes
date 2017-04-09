@@ -24,6 +24,7 @@ import vos.Categoria;
 import vos.CategoriaCambio;
 import vos.Cliente;
 import vos.CompraBoleta;
+import vos.NotaDebito;
 import vos.Recibo;
 
 @Path("clientes")
@@ -188,5 +189,36 @@ public class ClienteServices {
 		return Response.status(500).entity(rs).build();
 	}
 	
+	@POST
+	@Path("{idCliente}/devolver/{idBoleta}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response devolverBoleta(@PathParam("idCliente")Long idCliente, @PathParam("idBoleta")Long idBoleta){
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		NotaDebito nd = new NotaDebito();
+		try{
+			nd = tm.devolverBoleta(idCliente, idBoleta);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(500).entity(nd).build();
+	}
+	
+	@POST
+	@Path("{idCliente}/devolverAbono")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response devolverAbono(@PathParam("idCliente")Long idCliente){
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		ArrayList<NotaDebito> nd = new ArrayList<>();
+		try{
+			nd = tm.devolverAbono(idCliente);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(500).entity(nd).build();
+	}
 	
 }

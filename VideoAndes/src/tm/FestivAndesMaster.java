@@ -33,6 +33,7 @@ import vos.CompraBoleta;
 import vos.EspectaculoPopular;
 import vos.Funcion;
 import vos.Funcion2;
+import vos.NotaDebito;
 import vos.OperadorLogistico;
 import vos.RangoFechas;
 import vos.Recibo;
@@ -539,6 +540,8 @@ public class FestivAndesMaster {
 		}
 		return r;
 	}
+	
+	
 	public ArrayList<Recibo> registrarCompraMultiple( Long idCliente,CompraBoleta[] cbs) throws Exception
 	{
 		DAOCliente daoCliente = new DAOCliente();
@@ -570,6 +573,39 @@ public class FestivAndesMaster {
 		}
 		return rs;
 	}
+	
+	public NotaDebito devolverBoleta( Long idCliente, Long idBoleta) throws Exception
+	{
+		DAOCliente daoCliente = new DAOCliente();
+		NotaDebito nd = new NotaDebito();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoCliente.setConn(conn);
+			nd = daoCliente.devolverBoleta(idBoleta, idCliente);
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoCliente.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return nd;
+	}
+	
 	public ArrayList<Recibo> registrarAbono(Long idCliente, CompraBoleta[]cbs) throws Exception {
 		DAOCliente daoCliente = new DAOCliente();
 		ArrayList<Recibo> rs = new ArrayList<>();
@@ -601,6 +637,39 @@ public class FestivAndesMaster {
 		return rs;
 		
 	}
+	
+	public ArrayList<NotaDebito> devolverAbono(Long idCliente) throws Exception {
+		DAOCliente daoCliente = new DAOCliente();
+		ArrayList<NotaDebito> nd = new ArrayList<>();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoCliente.setConn(conn);
+			nd = daoCliente.devolverAbonamiento(idCliente);
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoCliente.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return nd;
+		
+	}
+	
 	public ArrayList<ReporteFuncion> generarReporteFuncion(Long idFuncion, Long idEspectaculo)throws Exception {
 		DAOFuncion daoFuncion = new DAOFuncion();
 		ArrayList<ReporteFuncion> reportes = new ArrayList<>();

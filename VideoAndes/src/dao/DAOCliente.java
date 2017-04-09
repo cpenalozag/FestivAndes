@@ -528,9 +528,32 @@ public class DAOCliente {
 		return devuelta;
 
 	}
+	
+	private Date fechaInicioFestival() throws Exception{
+		Date date = new Date();
+		String sql = "SELECT MIN(TO_DATE (DIA, 'mm/dd/yy')) AS FECHA FROM FUNCION";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+		if (rs.next()){
+			String dateInString = rs.getString("DIA");
+			date = sdf.parse(dateInString);
+		}
+		else{
+			throw new Exception("No se ha establecido la fecha inicial del festival");
+		}
+		return date;
+	}
 
-	private boolean verificarFechaDevolucionAbonamiento(){
+	private boolean verificarFechaDevolucionAbonamiento() throws Exception{
+		Date date = fechaInicioFestival();
 		
+		Date actual = new Date();
+		if (date.getTime()-actual.getTime()>=1814400000){
+			return true;
+		}
+		return false;
 	}
 	
 	public ArrayList<NotaDebito> devolverAbonamiento (Long idCliente) throws Exception, Exception{
