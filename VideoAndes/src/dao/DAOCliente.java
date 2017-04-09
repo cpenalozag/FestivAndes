@@ -13,6 +13,7 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 import vos.Categoria;
 import vos.Cliente;
 import vos.CompraBoleta;
+import vos.NotaDebito;
 import vos.Recibo;
 import vos.Silla;
 
@@ -262,7 +263,28 @@ public class DAOCliente {
 		return (resp+1);
 	}
 
-	private boolean sillaDisponible(long idEspectaculo, long idFuncion, long idSilla, long idLocalidad) throws SQLException{
+	private boolean sillaDisponible(Long idEspectaculo, Long idFuncion, Long idLocalidad) throws SQLException{
+		boolean disponible = false;
+		String sql4 = "SELECT CAPACIDAD, COUNT(*) AS  CANTIDAD FROM BOLETA "
+				+ "NATURAL JOIN BOLETA_SILLA NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA)"
+				+ " NATURAL JOIN (SELECT ID AS IDLOCALIDAD, IDSITIO, CAPACIDAD FROM LOCALIDAD)"
+				+ " WHERE IDESPECTACULO='"+idEspectaculo+"' AND IDFUNCION='"+idFuncion+"' AND IDLOCALIDAD='"+idLocalidad+"' "
+				+ "GROUP BY CAPACIDAD";
+		PreparedStatement ps4 = conn.prepareStatement(sql4);
+		recursos.add(ps4);
+		ResultSet rs4 = ps4.executeQuery();
+		if (rs4.next()){
+			int cantidad = Integer.parseInt(rs4.getString("CANTIDAD"));
+			int capacidad = Integer.parseInt(rs4.getString("CAPACIDAD"));
+
+			if (cantidad<capacidad){
+				disponible=true;
+			}
+		}
+		return disponible;
+	}
+
+	private boolean sillaDisponibleNumerada(Long idEspectaculo, Long idFuncion, Long idSilla, Long idLocalidad) throws SQLException{
 		String sql4 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD FROM SILLA "
 				+ "NATURAL JOIN (SELECT DISTINCT IDSITIO FROM BOLETA "
 				+ "NATURAL JOIN BOLETA_SILLA WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
@@ -271,14 +293,14 @@ public class DAOCliente {
 				+ "NATURAL JOIN BOLETA_SILLA "
 				+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
 				+ "WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-				+ "SELECT * FROM ABC NATURAL JOIN SILLA WHERE IDLOCALIDAD='"+ idLocalidad +"'";
+				+ "SELECT * FROM ABC NATURAL JOIN SILLA WHERE IDLOCALIDAD='"+ idLocalidad +"' AND ID='" + idSilla + "'";
 		PreparedStatement ps4 = conn.prepareStatement(sql4);
 		recursos.add(ps4);
 		ResultSet rs4 = ps4.executeQuery();
 		return rs4.next();
 	}
 
-	public Silla obtenerSilla(long idSilla, long idFuncion, long idEspectaculo, long idSitio) throws SQLException{
+	public Silla obtenerSilla(Long idSilla, Long idFuncion, Long idEspectaculo, Long idSitio) throws SQLException{
 		Silla si = new Silla();
 		String sql = "SELECT * FROM SILLA WHERE ID = '"+idSilla+"' AND IDSITIO = '"+idSitio+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
@@ -294,121 +316,7 @@ public class DAOCliente {
 		return si;
 	}
 
-	public Recibo registrarCompraBoleta(long idCliente, long idFuncion, long idEspectaculo, long idSilla, long idSitio) throws Exception{
-		Silla silla = obtenerSilla(idSilla, idFuncion, idEspectaculo, idSitio);
-		String sql = "SELECT * FROM BOLETA NATURAL JOIN BOLETA_SILLA "
-				+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
-				+ "NATURAL JOIN LOCALIDAD  "
-				+ "WHERE IDFUNCION = '"+idFuncion+"' AND IDESPECTACULO = '"+idEspectaculo+"' AND IDLOCALIDAD = '"+silla.getLocalidad()+"'";
-		PreparedStatement ps = conn.prepareStatement(sql);
-		recursos.add(ps);
-		ResultSet rs = ps.executeQuery();
-		Recibo recibo = new Recibo();
-		if (rs.next()){
-			recibo.setPrecio(Double.parseDouble(rs.getString("PRECIO")));
-			recibo.setFuncion(de.obtenerFuncion(idEspectaculo, idFuncion, conn));
-			recibo.setSilla(silla);
-			recibo.setSitio(de.obtenerSitio(silla.getIdSitio(), conn));
-			boolean numerada = rs.getString("NUMERADA").equals("t");
-			if (numerada){
-				String sql2 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD "
-						+ "FROM SILLA NATURAL JOIN (SELECT DISTINCT IDSITIO "
-						+ "FROM BOLETA NATURAL JOIN BOLETA_SILLA "
-						+ "WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-						+ "MINUS "
-						+ "SELECT IDSILLA AS ID, IDSITIO, IDLOCALIDAD FROM BOLETA NATURAL JOIN BOLETA_SILLA "
-						+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
-						+ "WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-						+ "SELECT * FROM ABC NATURAL JOIN SILLA "
-						+ "WHERE IDLOCALIDAD='"+silla.getLocalidad()+"' AND ID='"+silla.getId()+"' AND IDSITIO = '"+silla.getIdSitio()+"'";
-				PreparedStatement ps2 = conn.prepareStatement(sql2);
-				recursos.add(ps2);
-				ResultSet rs2 = ps2.executeQuery();
-				if (rs2.next()){
-					int numBoleta = darNumeroBoleta();
-					String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
-					String insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"')";
-					String insert3 ="";
-					if (idCliente!=0){
-						insert3 = "Insert into BOLETA_DETALLE (ID,IDCLIENTE,ESCLIENTE) values ('"+numBoleta+"','"+idCliente+"','t')";
-					}
-					else{
-						insert3 = "Insert into BOLETA_DETALLE (ID,IDCLIENTE,ESCLIENTE) values ('"+numBoleta+"','','t')";
-					}
-					PreparedStatement i1 = conn.prepareStatement(insert1);
-					PreparedStatement i2 = conn.prepareStatement(insert2);
-					PreparedStatement i3 = conn.prepareStatement(insert3);
-					recursos.add(i1);
-					recursos.add(i2);
-					recursos.add(i3);
-					i1.executeQuery();
-					i2.executeQuery();
-					i3.executeQuery();
-				}
-				else{
-					throw new Exception("La silla no estÃ¡ disponible.");
-				}
-			}
-			else if (!numerada){
-				int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
-				String sql3 = "SELECT COUNT(*) AS CANTIDAD FROM BOLETA "
-						+ "NATURAL JOIN BOLETA_SILLA NATURAL JOIN (SELECT * FROM LOCALIDAD NATURAL JOIN TIPOLOCALIDAD) "
-						+ "WHERE IDFUNCION = '"+idFuncion+"' AND NOMBRE = '"+silla.getLocalidad()+"'";
-				PreparedStatement ps3 = conn.prepareStatement(sql3);
-				recursos.add(ps3);
-				ResultSet rs3 = ps3.executeQuery();
-				int cantidad = -1;
-				if(rs3.next()){
-					cantidad = Integer.parseInt(rs3.getString("CANTIDAD"));
-				}
-				if (cantidad<capacidad){
-					String sql4 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD FROM SILLA "
-							+ "NATURAL JOIN (SELECT DISTINCT IDSITIO FROM BOLETA "
-							+ "NATURAL JOIN BOLETA_SILLA WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-							+ "MINUS "
-							+ "SELECT IDSILLA AS ID, IDSITIO, IDLOCALIDAD FROM BOLETA "
-							+ "NATURAL JOIN BOLETA_SILLA "
-							+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
-							+ "WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-							+ "SELECT * FROM ABC NATURAL JOIN SILLA WHERE IDLOCALIDAD='"+ silla.getLocalidad() +"'";
-					PreparedStatement ps4 = conn.prepareStatement(sql4);
-					recursos.add(ps4);
-					ResultSet rs4 = ps4.executeQuery();
-					if (rs4.next()){
-						int numBoleta = darNumeroBoleta();
-						String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
-						String insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"')";
-						String insert3 ="";
-						if (idCliente!=0){
-							insert3 = "Insert into BOLETA_DETALLE (ID,IDCLIENTE,ESCLIENTE) values ('"+numBoleta+"','"+idCliente+"','t')";
-						}
-						else{
-							insert3 = "Insert into BOLETA_DETALLE (ID,IDCLIENTE,ESCLIENTE) values ('"+numBoleta+"','','t')";
-						}
-						PreparedStatement i1 = conn.prepareStatement(insert1);
-						PreparedStatement i2 = conn.prepareStatement(insert2);
-						PreparedStatement i3 = conn.prepareStatement(insert3);
-						recursos.add(i1);
-						recursos.add(i2);
-						recursos.add(i3);
-						i1.executeQuery();
-						i2.executeQuery();
-						i3.executeQuery();
-					}
-					else{
-						throw new Exception("La silla no estÃ¡ disponible.");
-					}
-				}
-			}
-		}
-		else{
-			throw new Exception("No hay boletas para el numero de funcion y localidad dadas.");
-		}
-		return recibo;
-
-	}
-
-	public Recibo registrarCompra(long idCliente, long idFuncion, long idEspectaculo, long idSilla, long idSitio, String abonada) throws Exception{
+	public Recibo registrarCompra(Long idCliente, Long idFuncion, Long idEspectaculo, Long idSilla, Long idSitio, String abonada) throws Exception{
 		Silla silla = obtenerSilla(idSilla, idFuncion, idEspectaculo, idSitio);
 		Recibo recibo = new Recibo();
 		String sql = "SELECT * FROM SILLA "
@@ -421,33 +329,33 @@ public class DAOCliente {
 
 		if (rs.next()){
 			if(abonada.equals("f")){
-			recibo.setPrecio(Double.parseDouble(rs.getString("PRECIO")));
+				recibo.setPrecio(Double.parseDouble(rs.getString("PRECIO")));
 			}
 			else{
 				Double precio = Double.parseDouble(rs.getString("PRECIO"));
 				Double precioNuevo = precio * 0.8;
 				recibo.setPrecio(precioNuevo);
 			}
-			
+
 			recibo.setFuncion(de.obtenerFuncion(idEspectaculo, idFuncion, conn));
-			
+
 			recibo.setSilla(silla);
 
 			recibo.setSitio(de.obtenerSitio(silla.getIdSitio(), conn));
-			
+
 			boolean numerada = rs.getString("NUMERADA").equals("t");
 			if (numerada){
 
-				if (sillaDisponible(idEspectaculo, idFuncion, idSilla, silla.getLocalidad()))
+				if (sillaDisponibleNumerada(idEspectaculo, idFuncion, idSilla, silla.getLocalidad()))
 				{
-					
+
 					int numBoleta = darNumeroBoleta();
 					String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
 					String insert2 = "";
 					if(abonada.equals("f")){
-						insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f')";
+						insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f', 'f')";
 					}else{
-						insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t')";
+						insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t', 'f')";
 					}
 					String insert3 ="";
 					if (idCliente!=0){
@@ -465,40 +373,32 @@ public class DAOCliente {
 					recursos.add(i1);
 					recursos.add(i2);
 					recursos.add(i3);
-					i1.executeQuery();
+
 					i2.executeQuery();
 					i3.executeQuery();
+					i1.executeQuery();
 				}
 				else{
-					throw new Exception("no está disponible la silla");
-					
+					throw new Exception("La silla no está disponible.");
+
 				}
 			}
 			else if (!numerada){
-				System.out.println("entro");
-				int capacidad = Integer.parseInt(rs.getString("CAPACIDAD"));
-				System.out.println("3nee3");
-				String sql3 = "SELECT COUNT(*) AS CANTIDAD FROM BOLETA "
-						+ "NATURAL JOIN BOLETA_SILLA NATURAL JOIN (SELECT * FROM LOCALIDAD NATURAL JOIN TIPOLOCALIDAD) "
-						+ "WHERE IDFUNCION = '"+idFuncion+"' AND NOMBRE = '"+silla.getLocalidad()+"'";
-				PreparedStatement ps3 = conn.prepareStatement(sql3);
-				System.out.println("sql stm: " + sql3);
-				recursos.add(ps3);
-				ResultSet rs3 = ps3.executeQuery();
-				int cantidad = -1;
-				if(rs3.next()){
-					cantidad = Integer.parseInt(rs3.getString("CANTIDAD"));
-				}
-				if (cantidad<capacidad){
-					String sql4 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD FROM SILLA "
+
+
+
+				if (sillaDisponible(idEspectaculo, idFuncion, silla.getLocalidad())){
+					String sql4 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD FROM SILLA  "
 							+ "NATURAL JOIN (SELECT DISTINCT IDSITIO FROM BOLETA "
-							+ "NATURAL JOIN BOLETA_SILLA WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-							+ "MINUS "
-							+ "SELECT IDSILLA AS ID, IDSITIO, IDLOCALIDAD FROM BOLETA "
 							+ "NATURAL JOIN BOLETA_SILLA "
-							+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
 							+ "WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
-							+ "SELECT * FROM ABC NATURAL JOIN SILLA WHERE IDLOCALIDAD='"+ silla.getLocalidad() +"'";
+							+ "MINUS "
+							+ "SELECT IDSILLA AS ID, IDSITIO, IDLOCALIDAD "
+							+ "FROM BOLETA NATURAL JOIN BOLETA_SILLA "
+							+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
+							+ "WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"')  "
+							+ "SELECT * FROM ABC NATURAL JOIN SILLA "
+							+ "WHERE IDLOCALIDAD='"+silla.getLocalidad()+"'";
 					PreparedStatement ps4 = conn.prepareStatement(sql4);
 					System.out.println("sql stm: " + sql4);
 					recursos.add(ps4);
@@ -508,9 +408,9 @@ public class DAOCliente {
 						String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
 						String insert2 = "";
 						if(abonada.equals("f")){
-							insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f')";
+							insert2 ="Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','f', 'f')";
 						}else{
-							insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t')";
+							insert2 = "Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO, ABONADA, CANCELADA) values ('"+numBoleta+"','"+idFuncion+"','"+idEspectaculo+"','t', 'f')";
 						}
 						String insert3 ="";
 						if (idCliente!=0){
@@ -525,14 +425,16 @@ public class DAOCliente {
 						recursos.add(i1);
 						recursos.add(i2);
 						recursos.add(i3);
-						i1.executeQuery();
+
 						i2.executeQuery();
 						i3.executeQuery();
-					}
-					else{
-						throw new Exception("No hay sillas disponibles.");
+						i1.executeQuery();
 					}
 
+
+				}
+				else{
+					throw new Exception("No hay sillas disponibles.");
 				}
 			}
 			else{
@@ -550,15 +452,86 @@ public class DAOCliente {
 			recibos.add(registrarCompra(idCliente, cbs[i].getIdFuncion(), cbs[i].getIdEspectaculo(), cbs[i].getIdSilla(), cbs[i].getIdSitio(), "f"));
 		}
 		return recibos;
-		
+
 	}
-	
+
 	public ArrayList<Recibo> registrarAbono(Long idCliente, CompraBoleta[]cbs) throws Exception{
 		ArrayList<Recibo> recibos = new ArrayList<>();
 		for(int i =0; i< cbs.length; i++){
 			recibos.add(registrarCompra(idCliente, cbs[i].getIdFuncion(), cbs[i].getIdEspectaculo(), cbs[i].getIdSilla(), cbs[i].getIdSitio(), "t"));
 		}
 		return recibos;
+	}
+	
+	private boolean verificarFechaDevolucion(Long idBoleta){
+		
+	}
+
+	public NotaDebito devolverBoleta(Long idBoleta, Long idCliente) throws Exception{
+		NotaDebito devuelta = new NotaDebito();
+		
+		if (!verificarFechaDevolucion(idBoleta)){
+			throw new Exception ("No puede devolver la boleta menos de 5 días antes de la función.");
+		}
+
+		String sql = "SELECT * FROM BOLETA NATURAL JOIN BOLETA_DETALLE "
+				+ "NATURAL JOIN (SELECT ID AS IDCLIENTE, NOMBRE FROM USUARIOS) NATURAL JOIN BOLETA_SILLA "
+				+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
+				+ "NATURAL JOIN (SELECT ID AS IDLOCALIDAD,IDSITIO, PRECIO FROM LOCALIDAD) "
+				+ "WHERE ID='"+idBoleta+"'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()){
+			if (Integer.parseInt(rs.getString("IDCLIENTE"))!=idCliente){
+				throw new Exception("La boleta con el identificador dado no fue comprada por el cliente.");
+			}
+			devuelta.setIdBoleta(idBoleta);
+			devuelta.setIdCliente(idCliente);
+			devuelta.setPrecio(Double.parseDouble(rs.getString("PRECIO")));
+			devuelta.setNombre(rs.getString("NOMBRE"));
+
+			String sql2 = "DELETE FROM BOLETA_SILLA WHERE ID='"+idBoleta+"'";
+			String sql3 = "UPDATE BOLETA SET CANCELADA='t' WHERE ID = '"+idBoleta+"'";
+			PreparedStatement ps2 = conn.prepareStatement(sql2);
+			PreparedStatement ps3 = conn.prepareStatement(sql3);
+			recursos.add(ps3);
+			ps3.executeQuery();
+			recursos.add(ps2);
+			ps2.executeQuery();
+
+		}
+		else{
+			throw new Exception("No existe una boleta con el id dado.");
+		}
+		return devuelta;
+
+	}
+
+	private boolean verificarFechaDevolucionAbonamiento(){
+		
+	}
+	
+	public ArrayList<NotaDebito> devolverAbonamiento (Long idCliente) throws Exception, Exception{
+		ArrayList<NotaDebito> devoluciones = new ArrayList<>();
+		
+		if (!verificarFechaDevolucionAbonamiento()){
+			throw new Exception("No puede devolver el abonamiento menos de 3 semanas antes de la función.");
+		}
+
+		String sql = "SELECT * FROM BOLETA NATURAL JOIN BOLETA_DETALLE NATURAL JOIN BOLETA_SILLA "
+				+ "WHERE IDCLIENTE='"+idCliente+"' AND ABONADA='t'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()){
+			NotaDebito devolucion = devolverBoleta(Long.parseLong(rs.getString("ID")), idCliente);
+			devoluciones.add(devolucion);
+		}
+		if (devoluciones.isEmpty()){
+			throw new Exception("El cliente no tiene boletas compradas por abonamiento.");
+		}
+		return devoluciones;
 	}
 
 }

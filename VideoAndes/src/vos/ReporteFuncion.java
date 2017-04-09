@@ -26,7 +26,7 @@ public class ReporteFuncion {
 	}
 	public void setCantidadBoletas(int cantidadBoletas) {
 		this.cantidadBoletas = cantidadBoletas;
-	}
+	}	
 	public Double getProducido() {
 		return producido;
 	}
