@@ -343,9 +343,8 @@ public class DAOCliente {
 			recibo.setFuncion(de.obtenerFuncion(idEspectaculo, idFuncion, conn));
 
 			recibo.setSilla(silla);
-
-			recibo.setSitio(de.obtenerSitio(silla.getIdSitio(), conn));
-
+			
+			
 			boolean numerada = rs.getString("NUMERADA").equals("t");
 			if (numerada){
 
@@ -353,6 +352,7 @@ public class DAOCliente {
 				{
 
 					int numBoleta = darNumeroBoleta();
+					recibo.setIdBoleta(numBoleta);
 					String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
 					String insert2 = "";
 					if(abonada.equals("f")){
@@ -388,8 +388,6 @@ public class DAOCliente {
 			}
 			else if (!numerada){
 
-
-
 				if (sillaDisponible(idEspectaculo, idFuncion, silla.getLocalidad())){
 					String sql4 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD FROM SILLA  "
 							+ "NATURAL JOIN (SELECT DISTINCT IDSITIO FROM BOLETA "
@@ -408,6 +406,7 @@ public class DAOCliente {
 					ResultSet rs4 = ps4.executeQuery();
 					if (rs4.next()){
 						int numBoleta = darNumeroBoleta();
+						recibo.setIdBoleta(numBoleta);
 						String insert1 = "Insert into BOLETA_SILLA (ID,IDSITIO,IDSILLA) values ('"+numBoleta+"','"+silla.getIdSitio()+"','"+silla.getId()+"')";
 						String insert2 = "";
 						if(abonada.equals("f")){
