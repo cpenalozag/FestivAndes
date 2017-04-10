@@ -487,7 +487,6 @@ public class DAOCliente {
 				+ "NATURAL JOIN (SELECT ID AS IDFUNCION, IDESPECTACULO, DIA FROM FUNCION) "
 				+ "WHERE ID = '"+idBoleta+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
-		System.out.println("sql stm : " + sql);
 		recursos.add(ps);
 		ResultSet rs = ps.executeQuery();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");

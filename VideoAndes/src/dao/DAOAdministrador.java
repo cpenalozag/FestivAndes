@@ -69,6 +69,7 @@ public class DAOAdministrador {
 			
 			Long idboleta = Long.parseLong(rs.getString("ID"));
 			Long idCliente = Long.parseLong(rs.getString("IDCLIENTE"));
+			daoCli.setConn(conn);
 			devoluciones.add(daoCli.devolverBoleta(idboleta,idCliente));
 		}
 		String sql2 = "update funcion set cancelada = 't' where ID = 1 AND IDESPECTACULO =1";
