@@ -68,6 +68,8 @@ public class AdminServices {
 			// TODO: handle exception
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
+		System.out.println("hola carlos");
 		return Response.status(500).entity(informe).build();
+		
 	}
 }

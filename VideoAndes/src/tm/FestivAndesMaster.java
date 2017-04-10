@@ -511,7 +511,7 @@ public class FestivAndesMaster {
 		return clientes;
 	}
 	
-	public InformeAsistencia darInformeAsistencia(Long idCliente) throws SQLException{
+	public InformeAsistencia darInformeAsistencia(Long idCliente){
 		DAOCliente daoCliente = new DAOCliente();
 		InformeAsistencia info = new InformeAsistencia();
 		try{
