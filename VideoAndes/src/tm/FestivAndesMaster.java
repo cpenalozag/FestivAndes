@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import com.sun.security.ntlm.Client;
 
+import dao.DAOAdministrador;
 import dao.DAOCliente;
 import dao.DAOCompania;
 import dao.DAOEspectaculo;
@@ -606,6 +607,8 @@ public class FestivAndesMaster {
 		return nd;
 	}
 	
+	
+	
 	public ArrayList<Recibo> registrarAbono(Long idCliente, CompraBoleta[]cbs) throws Exception {
 		DAOCliente daoCliente = new DAOCliente();
 		ArrayList<Recibo> rs = new ArrayList<>();
@@ -670,6 +673,39 @@ public class FestivAndesMaster {
 		
 	}
 	
+	public ArrayList<NotaDebito> cancelarFuncion(Long idFuncion, Long idEspectaculo) throws Exception{
+		
+		DAOAdministrador daoAdmin = new DAOAdministrador();
+		ArrayList<NotaDebito> nd = new ArrayList<>();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoAdmin.setConn(conn);
+			nd = daoAdmin.cancelarFuncion(idFuncion, idEspectaculo);
+			conn.commit();
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoAdmin.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return nd;
+		
+	}
 	public ArrayList<ReporteFuncion> generarReporteFuncion(Long idFuncion, Long idEspectaculo)throws Exception {
 		DAOFuncion daoFuncion = new DAOFuncion();
 		ArrayList<ReporteFuncion> reportes = new ArrayList<>();
