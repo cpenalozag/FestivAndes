@@ -34,6 +34,7 @@ import vos.CompraBoleta;
 import vos.EspectaculoPopular;
 import vos.Funcion;
 import vos.Funcion2;
+import vos.InformeAsistencia;
 import vos.NotaDebito;
 import vos.OperadorLogistico;
 import vos.RangoFechas;
@@ -508,6 +509,37 @@ public class FestivAndesMaster {
 		}
 
 		return clientes;
+	}
+	
+	public InformeAsistencia darInformeAsistencia(Long idCliente) throws SQLException{
+		DAOCliente daoCliente = new DAOCliente();
+		InformeAsistencia info = new InformeAsistencia();
+		try{
+			this.conn = darConexion();
+			daoCliente.setConn(conn);
+			info = daoCliente.informeAsistencia(idCliente);
+		}catch(SQLException e){
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}finally{
+			try {
+				daoCliente.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+
+		return info;
+		
 	}
 	
 	public Recibo generarCompra(long idCliente, long idFuncion, long idEspectaculo, long idSilla, long idSitio, String abonada) throws Exception {
