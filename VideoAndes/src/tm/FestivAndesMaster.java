@@ -511,13 +511,18 @@ public class FestivAndesMaster {
 		return clientes;
 	}
 	
-	public InformeAsistencia darInformeAsistencia(Long idCliente){
+	public InformeAsistencia darInformeAsistencia(Long idCliente) throws SQLException{
 		DAOCliente daoCliente = new DAOCliente();
 		InformeAsistencia info = new InformeAsistencia();
 		try{
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			daoCliente.setConn(conn);
+			conn.setSavepoint();
 			info = daoCliente.informeAsistencia(idCliente);
+			conn.commit();
+			conn.setAutoCommit(true);
 		}catch(SQLException e){
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
@@ -583,15 +588,22 @@ public class FestivAndesMaster {
 		{
 			//////Transacción
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			daoCliente.setConn(conn);
+			conn.setSavepoint();
 			rs = daoCliente.registrarCompraMultiple(idCliente,cbs);
+			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback();
 			throw e;
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
+			
 			throw e;
 		} finally {
 			try {
@@ -615,11 +627,17 @@ public class FestivAndesMaster {
 		{
 			//////Transacción
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			daoCliente.setConn(conn);
+			conn.setSavepoint();
 			nd = daoCliente.devolverBoleta(idBoleta, idCliente);
+			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback();
 			throw e;
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
@@ -647,16 +665,24 @@ public class FestivAndesMaster {
 		try 
 		{
 			//////Transacción
+			
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			daoCliente.setConn(conn);
+			conn.setSavepoint();
 			rs = daoCliente.registrarAbono(idCliente,cbs);
+			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback();
 			throw e;
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
+			
 			throw e;
 		} finally {
 			try {
@@ -680,15 +706,22 @@ public class FestivAndesMaster {
 		{
 			//////Transacción
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			daoCliente.setConn(conn);
+			conn.setSavepoint();
 			nd = daoCliente.devolverAbonamiento(idCliente);
+			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback();
 			throw e;
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback();
 			throw e;
 		} finally {
 			try {
@@ -713,12 +746,17 @@ public class FestivAndesMaster {
 		{
 			//////Transacción
 			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			daoAdmin.setConn(conn);
+			conn.setSavepoint();
 			nd = daoAdmin.cancelarFuncion(idFuncion, idEspectaculo);
 			conn.commit();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
+			conn.rollback();
 			throw e;
 		} catch (Exception e) {
 			System.err.println("GeneralException:" + e.getMessage());

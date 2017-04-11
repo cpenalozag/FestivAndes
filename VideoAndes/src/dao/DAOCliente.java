@@ -558,10 +558,11 @@ public class DAOCliente {
 		PreparedStatement ps = conn.prepareStatement(sql);
 		recursos.add(ps);
 		ResultSet rs = ps.executeQuery();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
 		if (rs.next()){
-			String dateInString = rs.getString("DIA");
-			date = sdf.parse(dateInString);
+			String dateInString = rs.getString("FECHA");
+			String dateArr[] = dateInString.split(" ");
+			date = sdf.parse(dateArr[0]);
 		}
 		else{
 			throw new Exception("No se ha establecido la fecha inicial del festival");
@@ -573,7 +574,8 @@ public class DAOCliente {
 		Date date = fechaInicioFestival();
 
 		Date actual = new Date();
-		if (date.getTime()-actual.getTime()>=1814400000){
+		Long ss = Math.abs(date.getTime()-actual.getTime());
+		if (ss>=1.814e+6){
 			return true;
 		}
 		return false;

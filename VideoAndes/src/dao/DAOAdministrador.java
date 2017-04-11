@@ -76,7 +76,7 @@ public class DAOAdministrador {
 		PreparedStatement ps2 = conn.prepareStatement(sql2);
 		System.out.println("sql stm: " + sql2);
 		recursos.add(ps2);
-		ps2.executeQuery();
+
 		return devoluciones;
 		
 		
