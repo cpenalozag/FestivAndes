@@ -24,6 +24,7 @@ import vos.Categoria;
 import vos.CategoriaCambio;
 import vos.Cliente;
 import vos.CompraBoleta;
+import vos.InformeAsistencia;
 import vos.NotaDebito;
 import vos.Recibo;
 
@@ -219,6 +220,22 @@ public class ClienteServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(500).entity(nd).build();
+	}
+	
+	@GET
+	@Path("{idCliente}/informeAsistencia")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darInformeAsistencia(@PathParam("idCliente")Long idCliente)
+	{
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		InformeAsistencia informe = new InformeAsistencia();
+		try{
+			informe = tm.darInformeAsistencia(idCliente);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(500).entity(informe).build();
 	}
 	
 }

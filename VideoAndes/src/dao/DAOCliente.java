@@ -16,6 +16,9 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 import vos.Categoria;
 import vos.Cliente;
 import vos.CompraBoleta;
+import vos.Funcion2;
+import vos.FuncionInfo;
+import vos.InformeAsistencia;
 import vos.NotaDebito;
 import vos.Recibo;
 import vos.Silla;
@@ -555,10 +558,11 @@ public class DAOCliente {
 		PreparedStatement ps = conn.prepareStatement(sql);
 		recursos.add(ps);
 		ResultSet rs = ps.executeQuery();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd");
 		if (rs.next()){
-			String dateInString = rs.getString("DIA");
-			date = sdf.parse(dateInString);
+			String dateInString = rs.getString("FECHA");
+			String dateArr[] = dateInString.split(" ");
+			date = sdf.parse(dateArr[0]);
 		}
 		else{
 			throw new Exception("No se ha establecido la fecha inicial del festival");
@@ -570,7 +574,8 @@ public class DAOCliente {
 		Date date = fechaInicioFestival();
 
 		Date actual = new Date();
-		if (date.getTime()-actual.getTime()>=1814400000){
+		Long ss = Math.abs(date.getTime()-actual.getTime());
+		if (ss>=1.814e+6){
 			return true;
 		}
 		return false;
@@ -596,6 +601,56 @@ public class DAOCliente {
 			throw new Exception("El cliente no tiene boletas compradas por abonamiento.");
 		}
 		return devoluciones;
+	}
+	
+	public InformeAsistencia informeAsistencia (Long idCliente) throws SQLException
+	{
+		InformeAsistencia informe = new InformeAsistencia();
+		ArrayList<FuncionInfo> funciones = new ArrayList<>();
+		int asistencias =0;
+		int noAsistidas = 0;
+		int canceladas = 0;
+		String sql = "SELECT* FROM((select * from ((select * from boleta)natural join (select * from BOLETA_DETALLE)))"
+				+ "NATURAL JOIN (SELECT * FROM((select ID AS IDFUNCION, IDESPECTACULO from funcion) "
+				+ "NATURAL JOIN (SELECT ID AS IDESPECTACULO, NOMBRE FROM ESPECTACULO)))) WHERE ASISTENCIA = 't' and IDCLIENTE = '"+ idCliente+"'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		System.out.println("sql stm: "+ sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()){
+			FuncionInfo funcion = new FuncionInfo();
+			funcion.setIdFuncion(Long.parseLong(rs.getString("IDFUNCION")));
+			funcion.setNombreEspectaculo(rs.getString("NOMBRE"));
+			funciones.add(funcion);
+			asistencias++;
+		}
+		informe.setIdUsuario(idCliente);
+		informe.setFuncionesAsistidas(funciones);
+		informe.setAsistencias(asistencias);
+		String sql2 = "SELECT * FROM((select * from boleta)"
+				+ "NATURAL JOIN(SELECT * FROM BOLETA_DETALLE)) "
+				+ "WHERE ASISTENCIA = 'f' and idcliente ='"+idCliente+"' and cancelada = 'f'";
+		PreparedStatement ps2 = conn.prepareStatement(sql2);
+		System.out.println("sql stm2: "+ sql2);
+		recursos.add(ps2);
+		ResultSet rs2 = ps2.executeQuery();
+		while (rs2.next()){
+			noAsistidas++;
+		}
+		informe.setNoAsistidas(noAsistidas);
+		String sql3 = "SELECT * FROM((select * from boleta)NATURAL JOIN(SELECT * FROM BOLETA_DETALLE)) "
+				+ "WHERE idcliente = '"+idCliente+"' and cancelada = 't'";
+		PreparedStatement ps3 = conn.prepareStatement(sql3);
+		System.out.println("sql stm3: "+ sql3);
+		recursos.add(ps3);
+		ResultSet rs3 = ps3.executeQuery();
+		while(rs3.next()){
+			canceladas++;
+		}
+		informe.setCancelada(canceladas);
+		
+		return informe;
+		
 	}
 	
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import tm.FestivAndesMaster;
 import vos.Funcion2;
+import vos.InformeAsistencia;
 import vos.NotaDebito;
 
 @Path("administradores")
@@ -52,5 +54,22 @@ public class AdminServices {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(500).entity(nd).build();
+	}
+	@GET
+	@Path("{idUsuario}/informeAsistencia/{idCliente}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darInformeAsistencia(@PathParam("idCliente")Long idCliente)
+	{
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		InformeAsistencia informe = new InformeAsistencia();
+		try{
+			informe = tm.darInformeAsistencia(idCliente);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		System.out.println("hola carlos");
+		return Response.status(500).entity(informe).build();
+		
 	}
 }
