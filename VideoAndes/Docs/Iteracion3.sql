@@ -105,9 +105,9 @@ CREATE TABLE SITIO
 );
 
 Insert into SITIO (ID,NOMBRE,CAPACIDAD,TIPO,HORAINICIO,HORAFIN,IDORGANIZADOR) 
-    values ('1', 'Teatro de Bogota', '707', '1','700', '1900', '3');
+    values ('1', 'Teatro de Bogota', '100', '1','700', '1900', '3');
 Insert into SITIO (ID,NOMBRE,CAPACIDAD,TIPO,HORAINICIO,HORAFIN,IDORGANIZADOR) 
-    values ('2', 'Coliseo Cubierto el Campin', '14000', '3','800', '2200','4');
+    values ('2', 'Coliseo Cubierto el Campin', '140', '3','800', '2200','4');
 
 CREATE TABLE ESPECTACULO
 (
@@ -149,13 +149,13 @@ CREATE TABLE FUNCION
 Insert into FUNCION (ID,IDESPECTACULO,IDSITIO,DIA,HORA,REALIZADA) 
   values ('1','1','1','11/08/17','1300','f');
 Insert into FUNCION (ID,IDESPECTACULO,IDSITIO,DIA,HORA,REALIZADA) 
-  values ('2','1','2','04/08/17','1500','f');
+  values ('2','1','2','06/08/17','1500','f');
 Insert into FUNCION (ID,IDESPECTACULO,IDSITIO,DIA,HORA,REALIZADA) 
-  values ('1','2','1','05/10/17','2000','f');
+  values ('1','2','1','04/08/17','2000','t');
 Insert into FUNCION (ID,IDESPECTACULO,IDSITIO,DIA,HORA,REALIZADA) 
   values ('2','2','2','08/10/17','2100','f');
 Insert into FUNCION (ID,IDESPECTACULO,IDSITIO,DIA,HORA,REALIZADA) 
-  values ('1','3','2','02/11/17','1400','f');
+  values ('1','3','2','07/11/17','1400','f');
 
 CREATE TABLE TIPOLOCALIDAD
 (
@@ -184,13 +184,13 @@ CREATE TABLE LOCALIDAD
 );
 
 Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('1','1','t','200000','5');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('2','1','t','150000','3');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('3','1','t','100000','2');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('4','1','t','75000','2');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('1','2','f','30000','4');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('2','2','f','25000','3');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('3','2','f','20000','3');
-Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('4','2','f','17000','3');
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('2','1','t','150000',25);
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('3','1','t','100000','45');
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('4','1','t','75000','25');
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('1','2','f','30000','20');
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('2','2','f','25000','18');
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('3','2','f','20000','36');
+Insert into LOCALIDAD (ID,IDSITIO,NUMERADA,PRECIO,CAPACIDAD) values ('4','2','f','17000','30');
 
 CREATE TABLE CATEGORIA
 (
@@ -266,14 +266,33 @@ CREATE TABLE SILLA
 
 Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('1','1','1','1','1');
 Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('2','1','1','1','2');
-Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('3','1','2','1','3');
+Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('3','1','2','2','3');
 Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('4','1','2','2','1');
-Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('5','1','3','2','2');
-Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('6','1','4','2','3');
+Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('5','1','3','3','2');
+Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('6','1','4','3','3');
 
 Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('1','2','1','','');
 Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('2','2','1','','');
 Insert into SILLA (ID, IDSITIO, IDLOCALIDAD, FILA, NUMERO) values ('3','2','2','','');
+
+insert into Silla values ('7','1', '4','1','12');
+
+insert into silla values('8','1','1','1','5');
+insert into silla values('9','1','1','1','6');
+insert into silla values ('10',1,1,1,7);
+
+insert into silla values (11,1,1,1,8);
+insert into silla values (12,1,1,1,9);
+insert into silla values (13,1,1,1,10);
+
+insert into silla values(14,1,1,1,11);
+insert into silla values(4,2,1,'','');
+
+insert into silla values (15,1,1,1,15);
+insert into silla values (16,1,1,1,16);
+insert into silla values (17,1,1,2,17);
+insert into silla values (18,1,1,2,18);
+insert into silla values (19,1,1,2,19);
 
 
 CREATE TABLE BOLETA
@@ -281,17 +300,21 @@ CREATE TABLE BOLETA
 ID NUMBER NOT NULL,
 IDFUNCION NUMBER NOT NULL,
 IDESPECTACULO NUMBER NOT NULL,
+ASISTENCIA char(1),
+CANCELADA char(1),
+ABONADA char(1),
 CONSTRAINT BOLETA_PK PRIMARY KEY (ID),
 CONSTRAINT FUNCIONB_FK FOREIGN KEY (IDFUNCION,IDESPECTACULO) REFERENCES FUNCION(ID,IDESPECTACULO)
 );
 
-Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('1','1','1');
-Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('2','1','2');
-Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('3','1','1');
-Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('4','1','2');
-Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('5','1','1');
 
-Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO) values ('7','2','1');
+Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO,ASISTENCIA,CANCELADA,ABONADA) values ('1','1','1','f','f','f');
+Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO,ASISTENCIA,CANCELADA,ABONADA) values ('2','1','2','t','f','f');
+Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO,ASISTENCIA,CANCELADA,ABONADA) values ('3','1','1','f','f','f');
+Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO,ASISTENCIA,CANCELADA,ABONADA) values ('4','1','2','t','f','f');
+Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO,ASISTENCIA,CANCELADA,ABONADA) values ('5','1','1','f','f','f');
+
+Insert into BOLETA (ID,IDFUNCION,IDESPECTACULO,ASISTENCIA,CANCELADA,ABONADA) values ('7','2','1','f','f','f');
 
 CREATE TABLE BOLETA_DETALLE
 (
@@ -543,40 +566,10 @@ CREATE TABLE COMPANIA_ESPECTACULO
  VALUES ('1','1');
  
 INSERT INTO COMPANIA_ESPECTACULO (IDCOMPANIA,IDESPECTACULO)
- VALUES ('2','2');
+ VALUES ('1','2');
  
 INSERT INTO COMPANIA_ESPECTACULO (IDCOMPANIA,IDESPECTACULO)
  VALUES ('3','3'); 
 
 INSERT INTO COMPANIA_ESPECTACULO (IDCOMPANIA,IDESPECTACULO)
  VALUES ('4','4'); 
-
-alter table boleta
-add abonada char(1);
-
-insert into Silla values ('7','1', '4','1','12');
-
-insert into silla values('8','1','1','1','5');
-insert into silla values('9','1','1','1','6');
-insert into silla values ('10',1,1,1,7);
-
-insert into silla values (11,1,1,1,8);
-insert into silla values (12,1,1,1,9);
-insert into silla values (13,1,1,1,10);
-
-insert into silla values(14,1,1,1,11);
-insert into silla values(4,2,1,'','');
-
-alter table boleta 
-add asistencia char(1);
-
-alter table boleta 
-add cancelada char(1);
-
-select * from boleta;
-UPDATE BOLETA SET ASISTENCIA  = 'f';
-UPDATE BOLETA SET ABONADA  = 'f';
-
-update boleta set cancelada = 'f';
-
-
