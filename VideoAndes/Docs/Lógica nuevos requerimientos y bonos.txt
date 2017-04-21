@@ -1,0 +1,25 @@
+Lógica nuevos requerimientos
+
+RF10 - REGISTRAR COMPRA MÚLTIPLE DE BOLETAS
+Para este requerimiento funcional se ejecutará el requerimiento de comprar boleta varias veces. Para este requerimiento se recibirá un arreglo Json que incluirá la información requerida por el requerimiento de compra de una boleta tantas veces como boletas se deseen comprar.
+RF11 - REGISTRAR COMPRA DE UN ABONAMIENTO
+Para este requerimiento se recibirá información sobre distintas funciones, y para cada una de estas se ejecutará el requerimiento de compra de boleta pero aplicando un 20% de descuento a vada boleta y marcándolas como parte de un abono.
+RF12 - DEVOLVER BOLETA
+Para este requerimiento, se reciben el id de un cliente y el id de una boleta, con esta información se revisará que exista una boleta con este id y que la boleta este asociada al cliente con el id dado. Posteriormente se eliminará la entrada en la tabla boleta-silla para que vuelva a estar disponible la silla asociada a la boleta para esta función y además, se marcará como cancelada la entrada con este id en la tabla boleta, esto con el fin de llevar un registro de las boletas que fueron devueltas. Para poder ejecutar este requerimiento, primero se revisará que siga siendo posible dada la fecha de la función.
+RF13 - DEVOLVER ABONAMIENTO
+Para este requerimiento, dado el id de un cliente se realizara una consulta SQL en la cual se buscarán todos los ids de boletas asociadas a este cliente y que sean parte de un abono, con cada entrada del resultado se utilizará el requerimiento de devolver boleta. Para poder ejecutar este requerimiento, primero se revisará que siga siendo posible dada la fecha inicial del festival.
+RF14 - CANCELAR UNA FUNCIÓN
+En este requerimiento se recibe el id de una función con el cual se realiza una consulta que buscará los ids de las boletas asociadas a esta función. Posteriormente se utilizará el requerimiento de devolver boleta con cada uno de los ids.
+RFC7. CONSULTAR ASISTENCIA AL FESTIVAL DE UN CLIENTE REGISTRADO
+En este requerimiento se realiza una consulta sobre las boletas que tiene un cliente. El resultado será agrupado para filtrar la información como se pide en el enunciado.
+RFC8. CONSULTAR COMPAÑÍA
+En este requerimiento se consulta la información relacionada a los ingresos y asistencia de cada función organizada por una compañía en particular en un rango de fechas dado. Para esto se realiza una consulta de las funciones de la compañía agrupadas por los datos que se desean en el resultado.
+
+Mecanismos para garantizar las propiedades ACID
+En primer lugar, se desactivó autocommit pues este modo tiene implicaciones en el desempeño del programa y no permite un uso concurrente. Después de esto se estableció el nivel de aislamiento de transacciones a read committed, pues este evita las lecturas de datos sucios y da cierta libertad para manejar las transacciones.
+Para garantizar que se cumplieran las propiedades ACID se ubicaron savepoints en partes en las cuales los datos no han sido alterados y en caso de existir errores o conflictos durante la ejecución, se ejecutan rollbacks hasta los checkpoints previos o en caso de terminación correcta se realiza commit para que perduren los cambios.
+
+Bono
+¿Qué diferencias hay en el manejo transaccional por parte de un contenedor de aplicaciones con respecto al manejo dado por parte del programador de la aplicación? Explique claramente las ventajas y desventajas de cada uno de ellos y cómo se refleja en su arquitectura de software y diseño detallado de su FestivAndes
+El manejo transacciones por parte del contenedor de aplicaciones se guía por un control de concurrencia pesimista, limita el rendimiento de la aplicación pero asegura la atomicidad y durabilidad de la información; las ventaja principal es que la información no presentará inconsistencias, por otra parte la desventaja son las limitaciones en rendimiento y en concurrencia. El programador de la aplicación puede adaptar el control de la base de datos a las necesidades de la aplicación, pero se debe tener cuidado pues se pueden presentar errores que afectarían la calidad de los datos; las principales ventajas son la posibilidad de permitir un uso concurrente de la aplicación y la facilidad de adaptar la base de datos a las necesidades de la aplicación, la principal desventaja es el riesgo de mal manejo de la información por no implementar suficientes medidas preventivas para cuidar que las transacciones se realicen correctamente.
+Esto se ve reflejado en nuestra arquitectura de software y diseño en cuanto a que no hicimos uso del autocommit pues este limitaba el rendimiento de la aplicación y no permitía un uso concurrente de la misma. Para asegurar que la información fuera tratada correctamente hicimos uso de savepoints para de esta forma tener un sistema de recuperación ante fallas que asegure la integridad de la información en la base de datos.
