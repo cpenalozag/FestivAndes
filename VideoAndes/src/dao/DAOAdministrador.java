@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
 
+import vos.BoletaConsulta;
+import vos.ClienteBueno;
+import vos.FiltrosBoletas;
 import vos.NotaDebito;
 
 public class DAOAdministrador {
@@ -77,10 +80,73 @@ public class DAOAdministrador {
 		System.out.println("sql stm: " + sql2);
 		recursos.add(ps2);
 
-		return devoluciones;
-		
-		
+		return devoluciones;	
 	}
 
+	public ArrayList<ClienteBueno> clientesBuenos(int n) throws Exception{
+		ArrayList<ClienteBueno> clientes = new ArrayList<>();
+		String  sql = "WITH SIRVEN AS (SELECT ID AS IDCLIENTE FROM CLIENTE "
+				+ "MINUS SELECT DISTINCT IDCLIENTE FROM BOLETA NATURAL JOIN BOLETA_SILLA "
+				+ "NATURAL JOIN BOLETA_DETALLE  "
+				+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
+				+ "WHERE IDLOCALIDAD<>1) "
+				+ "SELECT COUNT(ID), ID, NOMBRE, CORREO FROM USUARIOS "
+				+ "NATURAL JOIN (SELECT IDCLIENTE AS ID FROM SIRVEN) "
+				+ "NATURAL JOIN (SELECT ID AS IDBOLETA, IDCLIENTE AS ID FROM BOLETA_DETALLE) "
+				+ "GROUP BY ID, NOMBRE, CORREO HAVING COUNT(ID)>="+n;
+		PreparedStatement ps = conn.prepareStatement(sql);
+		System.out.println("sql stm: " + sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			ClienteBueno cliente = new ClienteBueno();
+			int numeroBoletas = Integer.parseInt(rs.getString("COUNT(ID)"));
+			Long idCliente = Long.parseLong(rs.getString("ID"));
+			String nombre = rs.getString("NOMBRE");
+			String correo = rs.getString("CORREO");
+			cliente.setBoletasCompradas(numeroBoletas);
+			cliente.setCorreo(correo);
+			cliente.setId(idCliente);
+			cliente.setNombre(nombre);
+			clientes.add(cliente);
+		}
+		return clientes;	
+	}
+	
+	public ArrayList<BoletaConsulta> consultarCompraBoletas(FiltrosBoletas filtros) throws Exception{
+		ArrayList<BoletaConsulta> consultas = new ArrayList<>();
+		String  sql = "SELECT NOMBRE, IDSITIO, DIA,COUNT(ID) AS NUMVENDIDAS, COUNT(CASE WHEN ESCLIENTE = 't' THEN 1 END) AS NUMCLIENTES "
+				+ "FROM (SELECT ID AS IDFUNCION, IDESPECTACULO, DIA,TO_CHAR(TO_DATE(DIA), 'FmDay') AS DIASEMANA, HORA "
+				+ "FROM FUNCION WHERE TO_CHAR(TO_DATE(DIA), 'FmDay')='"+filtros.getDiaSemana()+"' "
+				+ "AND DIA BETWEEN TO_DATE('"+filtros.getFechaFinal()+"') AND TO_DATE ('"+filtros.getFechaFinal()+"') "
+				+ "AND HORA BETWEEN "+filtros.getHoraFinal()+" AND "+filtros.getHoraFinal()+") NATURAL JOIN (SELECT ID, IDESPECTACULO, IDFUNCION "
+				+ "FROM BOLETA) NATURAL JOIN BOLETA_SILLA "
+				+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD "
+				+ "FROM SILLA WHERE IDLOCALIDAD = "+filtros.getTipoLocalidad()+") "
+				+ "NATURAL JOIN (SELECT ID AS IDESPECTACULO, NOMBRE FROM ESPECTACULO) "
+				+ "NATURAL JOIN (SELECT * FROM ELEMENTOEXTRA_ESPECTACULO WHERE IDELEMENTOEXTRA="+filtros.getIdElementoExtra()+") "
+				+ "NATURAL JOIN (SELECT ID, ESCLIENTE FROM BOLETA_DETALLE) GROUP BY NOMBRE,IDSITIO,DIA";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		System.out.println("sql stm: " + sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			BoletaConsulta consulta = new BoletaConsulta();
+			
+			String nombre = rs.getString("NOMBRE");
+			int idSitio = rs.getInt("IDSITIO");
+			String dia = rs.getString("DIA");
+			int numVendidas = rs.getInt("NUMVENDIDAS");
+			int numClientes = rs.getInt("NUMCLIENTES");
+			consulta.setEspectaculo(nombre);
+			consulta.setDia(dia);
+			consulta.setIdSitio(idSitio);
+			consulta.setUsuariosRegistrados(numClientes);
+			consulta.setBoletasVendidas(numVendidas);
+			
+			consultas.add(consulta);
+		}
+		return consultas;	
+	}
 
 }

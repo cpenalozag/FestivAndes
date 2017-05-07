@@ -29,9 +29,12 @@ import dao.DAOEspectaculo;
 import dao.DAOFestivAndes;
 import dao.DAOFuncion;
 import dao.DAOOperador;
+import vos.BoletaConsulta;
 import vos.Cliente;
+import vos.ClienteBueno;
 import vos.CompraBoleta;
 import vos.EspectaculoPopular;
+import vos.FiltrosBoletas;
 import vos.Funcion;
 import vos.Funcion2;
 import vos.InformeAsistencia;
@@ -942,6 +945,73 @@ public class FestivAndesMaster {
 		}
 		return esp;
 	}
+	
+	public ArrayList<ClienteBueno> clientesBuenos(int n)throws Exception {
+		DAOAdministrador dao = new DAOAdministrador();
+		ArrayList<ClienteBueno> clientes = new ArrayList<>();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			clientes = dao.clientesBuenos(n);
+			conn.commit();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return clientes;
+	}
+	
+	public ArrayList<BoletaConsulta> consultaBoletas(FiltrosBoletas filtros)throws Exception {
+		DAOAdministrador dao = new DAOAdministrador();
+		ArrayList<BoletaConsulta> consultas = new ArrayList<>();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			consultas = dao.consultarCompraBoletas(filtros);
+			conn.commit();
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return consultas;
+	}
+	
 }
 	
 

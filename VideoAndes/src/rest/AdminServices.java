@@ -14,6 +14,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tm.FestivAndesMaster;
+import vos.BoletaConsulta;
+import vos.ClienteBueno;
+import vos.FiltrosBoletas;
 import vos.Funcion2;
 import vos.InformeAsistencia;
 import vos.NotaDebito;
@@ -70,6 +73,40 @@ public class AdminServices {
 		}
 		System.out.println("hola carlos");
 		return Response.status(500).entity(informe).build();
+		
+	}
+	
+	@GET
+	@Path("{idUsuario}/clientesBuenos/{numBoletas}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darClientesBuenos(@PathParam("numBoletas")int numBoletas)
+	{
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		ArrayList<ClienteBueno> clientes = new ArrayList<>();
+		try{
+			clientes = tm.clientesBuenos(numBoletas);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(500).entity(clientes).build();
+		
+	}
+	
+	@GET
+	@Path("{idUsuario}/consultaBoletas")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darConsultaBoletas(@PathParam("filtros")FiltrosBoletas filtros)
+	{
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		ArrayList<BoletaConsulta> consultas = new ArrayList<>();
+		try{
+			consultas = tm.consultaBoletas(filtros);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(500).entity(consultas).build();
 		
 	}
 }
