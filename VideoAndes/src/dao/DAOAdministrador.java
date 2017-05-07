@@ -12,6 +12,7 @@ import vos.BoletaConsulta;
 import vos.ClienteBueno;
 import vos.FiltrosBoletas;
 import vos.NotaDebito;
+import vos.UsuarioReporte;
 
 public class DAOAdministrador {
 	
@@ -147,6 +148,47 @@ public class DAOAdministrador {
 			consultas.add(consulta);
 		}
 		return consultas;	
+	}
+	
+	public ArrayList<UsuarioReporte> darConsultaAsistencia(String nombreCompania, String fechaInicio, String fechaFin, String asistencia, String orderBy) throws SQLException{
+		ArrayList<UsuarioReporte> reporte = new ArrayList<>();
+		String sql = "select * from((select * from(select * from(SELECT * FROM(SELECT*FROM(select * from boleta)natural join(select * from boleta_detalle)) "
+				+ "NATURAL JOIN(select ID AS IDFUNCION, IDESPECTACULO, DIA from funcion))NATURAL JOIN(SELECT ID AS IDCLIENTE, CORREO, nombre as nombrecli FROM USUARIOS))"
+				+ "natural join(select * from COMPANIA_ESPECTACULO))natural join(select ID AS IDCOMPANIA, NOMBRE as NOMBRECOMPA from companias))"
+				+ "where DIA BETWEEN TO_DATE('"+fechaInicio+"', 'dd/mm/yy') AND TO_DATE('"+fechaFin+"', 'dd/mm/yy')and asistencia = '"+asistencia+"' and NOMBRECOMPA = '"+nombreCompania+"'order by "+ orderBy;
+		PreparedStatement ps = conn.prepareStatement(sql);
+		System.out.println("sql stm: "+ sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+
+		while(rs.next()){
+			UsuarioReporte usuario = new UsuarioReporte();
+			Long idCliente = Long.parseLong(rs.getString("IDCLIENTE"));
+			String nombre = rs.getString("NOMBRECLI");
+			String correo = rs.getString("CORREO");
+
+			if(reporte.size()==0){
+				usuario.setId(idCliente);
+				usuario.setNombre(nombre);
+				usuario.setCorreo(correo);
+				reporte.add(usuario);
+			}
+			else{	
+				for(int i = 0; i<reporte.size(); i++){
+					if( idCliente == reporte.get(i).getId()){
+						break;
+					}
+					else{
+						usuario.setId(idCliente);
+						usuario.setNombre(nombre);
+						usuario.setCorreo(correo);
+						reporte.add(usuario);
+					}
+				}
+			}
+		}
+		return reporte;
+
 	}
 
 }

@@ -48,6 +48,7 @@ import vos.ReporteEspectaculo;
 import vos.ReporteFuncion;
 import vos.Sitio;
 import vos.Sitio2;
+import vos.UsuarioReporte;
 
 /**
  * Fachada en patron singleton de la aplicaciÃ³n
@@ -1010,6 +1011,43 @@ public class FestivAndesMaster {
 			}
 		}
 		return consultas;
+	}
+	
+	public ArrayList<UsuarioReporte> darConsultaAsistencia(String nombreCompania, String fechaInicio, String fechaFin, String asistencia, String orderBy)throws Exception{
+		DAOAdministrador dao = new DAOAdministrador();
+		ArrayList<UsuarioReporte> resp = new ArrayList<>();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			conn.setAutoCommit(false);
+			conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			dao.setConn(conn);
+			conn.setSavepoint();
+			resp = dao.darConsultaAsistencia(nombreCompania, fechaInicio, fechaFin, asistencia, orderBy);
+			conn.commit();
+			conn.setAutoCommit(true);
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			conn.rollback();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return resp;
 	}
 	
 }

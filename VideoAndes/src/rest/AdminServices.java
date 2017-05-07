@@ -14,12 +14,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tm.FestivAndesMaster;
+import vos.Asistencia;
 import vos.BoletaConsulta;
 import vos.ClienteBueno;
 import vos.FiltrosBoletas;
 import vos.Funcion2;
 import vos.InformeAsistencia;
 import vos.NotaDebito;
+import vos.UsuarioReporte;
 
 @Path("administradores")
 public class AdminServices {
@@ -109,5 +111,20 @@ public class AdminServices {
 		}
 		return Response.status(500).entity(consultas).build();
 		
+	}
+	
+	@POST
+	@Path("{idUsuario}/asistenciaCompania")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response asistenciaCOmpania(Asistencia asistencia){
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		ArrayList<UsuarioReporte> us = new ArrayList<>();
+		try{
+			us = tm.darConsultaAsistencia(asistencia.getNombreCompania(), asistencia.getFehcaInicio(), asistencia.getFechaFin(), asistencia.getAsistencia(), asistencia.getOrderBy());
+		}catch(Exception e ){
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(us).build();
 	}
 }
