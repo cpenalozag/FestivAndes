@@ -1,0 +1,51 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Iteracion4",
+		"_postman_id": "6c2a90a0-330f-97ea-6b68-485dc5f011a1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "consultaBoletas",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/administradores/1/consultaBoletas",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"fechaInicial\":\"10/08/17\",\n\t\"fechaFinal\":\"12/08/17\",\n\t\"diaSemana\":\"Viernes\",\n\t\"idElementoExtra\":2,\n\t\"horaInicial\":1200,\n\t\"horaFinal\":1350,\n\t\"tipoLocalidad\":4\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "clientesBuenos",
+			"request": {
+				"url": "http://localhost:8080/VideoAndes/rest/administradores/1/clientesBuenos/5",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"fechaInicial\":\"10/08/17\",\n\t\"fechaFinal\":\"12/08/17\",\n\t\"diaSemana\":\"Viernes\",\n\t\"idElementoExtra\":2,\n\t\"horaInicial\":1200,\n\t\"horaFinal\":1350,\n\t\"tipoLocalidad\":4\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

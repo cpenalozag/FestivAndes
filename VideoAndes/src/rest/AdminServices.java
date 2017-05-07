@@ -93,10 +93,10 @@ public class AdminServices {
 		
 	}
 	
-	@GET
+	@POST
 	@Path("{idUsuario}/consultaBoletas")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response darConsultaBoletas(@PathParam("filtros")FiltrosBoletas filtros)
+	public Response darConsultaBoletas(FiltrosBoletas filtros)
 	{
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		ArrayList<BoletaConsulta> consultas = new ArrayList<>();
@@ -104,6 +104,7 @@ public class AdminServices {
 			consultas = tm.consultaBoletas(filtros);
 		}catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace(System.out);
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(500).entity(consultas).build();
