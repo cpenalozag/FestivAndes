@@ -58,7 +58,7 @@ public class AdminServices {
 			// TODO: handle exception
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(500).entity(nd).build();
+		return Response.status(200).entity(nd).build();
 	}
 	@GET
 	@Path("{idUsuario}/informeAsistencia/{idCliente}")
@@ -73,8 +73,7 @@ public class AdminServices {
 			// TODO: handle exception
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		System.out.println("hola carlos");
-		return Response.status(500).entity(informe).build();
+		return Response.status(200).entity(informe).build();
 		
 	}
 	
@@ -91,7 +90,7 @@ public class AdminServices {
 			// TODO: handle exception
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(500).entity(clientes).build();
+		return Response.status(200).entity(clientes).build();
 		
 	}
 	
@@ -109,7 +108,7 @@ public class AdminServices {
 			e.printStackTrace(System.out);
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(500).entity(consultas).build();
+		return Response.status(200).entity(consultas).build();
 		
 	}
 	
@@ -121,7 +120,7 @@ public class AdminServices {
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		ArrayList<UsuarioReporte> us = new ArrayList<>();
 		try{
-			us = tm.darConsultaAsistencia(asistencia.getNombreCompania(), asistencia.getFehcaInicio(), asistencia.getFechaFin(), asistencia.getAsistencia(), asistencia.getOrderBy());
+			us = tm.darConsultaAsistencia(asistencia.getNombreCompania(), asistencia.getFechaInicio(), asistencia.getFechaFin(), asistencia.getAsistencia(), asistencia.getOrderBy());
 		}catch(Exception e ){
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
