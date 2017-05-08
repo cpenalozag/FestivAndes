@@ -166,6 +166,7 @@ public class DAOAdministrador {
 			Long idCliente = Long.parseLong(rs.getString("IDCLIENTE"));
 			String nombre = rs.getString("NOMBRECLI");
 			String correo = rs.getString("CORREO");
+			System.out.println("hola");
 
 			if(reporte.size()==0){
 				usuario.setId(idCliente);
