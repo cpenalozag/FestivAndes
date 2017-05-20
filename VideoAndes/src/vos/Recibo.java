@@ -6,32 +6,39 @@ public class Recibo {
 	
 	@JsonProperty(value = "idBoleta")
 	private Integer idBoleta;
-	@JsonProperty(value = "funcion")
-	private FuncionBasica funcion;
-	@JsonProperty(value= "silla")
-	private Silla silla;
+	@JsonProperty(value = "idFuncion")
+	private Integer idFuncion;
+	@JsonProperty(value = "idEspectaculo")
+	private Integer idEspectaculo;
+	@JsonProperty(value = "idSilla")
+	private Integer idSilla;
 	@JsonProperty(value="precio")
 	private Double precio;
 	
 	
-	
+	public Integer getIdSilla() {
+		return idSilla;
+	}
+	public void setIdSilla(Integer idSilla) {
+		this.idSilla = idSilla;
+	}
 	public Integer getIdBoleta() {
 		return idBoleta;
 	}
 	public void setIdBoleta(Integer idBoleta) {
 		this.idBoleta = idBoleta;
 	}
-	public FuncionBasica getFuncion() {
-		return funcion;
+	public Integer getIdFuncion() {
+		return idFuncion;
 	}
-	public void setFuncion(FuncionBasica funcion) {
-		this.funcion = funcion;
+	public void setIdFuncion(Integer idFuncion) {
+		this.idFuncion = idFuncion;
 	}
-	public Silla getSilla() {
-		return silla;
+	public Integer getIdEspectaculo() {
+		return idEspectaculo;
 	}
-	public void setSilla(Silla silla) {
-		this.silla = silla;
+	public void setIdEspectaculo(Integer idEspectaculo) {
+		this.idEspectaculo = idEspectaculo;
 	}
 	public Double getPrecio() {
 		return precio;
@@ -39,6 +46,5 @@ public class Recibo {
 	public void setPrecio(Double precio) {
 		this.precio = precio;
 	}
-	
 	
 }

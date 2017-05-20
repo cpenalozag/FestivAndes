@@ -269,7 +269,7 @@ public class DAOCliente {
 		return (resp+1);
 	}
 
-	private boolean sillaDisponible(Long idEspectaculo, Long idFuncion, Long idLocalidad) throws SQLException{
+	private boolean sillaDisponible(int idEspectaculo, int idFuncion, int idLocalidad) throws SQLException{
 		boolean disponible = false;
 		String sql4 = "SELECT CAPACIDAD, COUNT(*) AS  CANTIDAD FROM BOLETA "
 				+ "NATURAL JOIN BOLETA_SILLA NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA)"
@@ -290,7 +290,7 @@ public class DAOCliente {
 		return disponible;
 	}
 
-	private boolean sillaDisponibleNumerada(Long idEspectaculo, Long idFuncion, Long idSilla, Long idLocalidad) throws SQLException{
+	private boolean sillaDisponibleNumerada(int idEspectaculo, int idFuncion, int idSilla, int idLocalidad) throws SQLException{
 		String sql4 = "WITH ABC AS (SELECT ID,IDSITIO,IDLOCALIDAD FROM SILLA "
 				+ "NATURAL JOIN (SELECT DISTINCT IDSITIO FROM BOLETA "
 				+ "NATURAL JOIN BOLETA_SILLA WHERE IDESPECTACULO = '"+idEspectaculo+"' AND IDFUNCION = '"+idFuncion+"') "
@@ -306,7 +306,7 @@ public class DAOCliente {
 		return rs4.next();
 	}
 
-	public Silla obtenerSilla(Long idSilla, Long idFuncion, Long idEspectaculo, Long idSitio) throws SQLException{
+	public Silla obtenerSilla(int idSilla, int idFuncion, int idEspectaculo, int idSitio) throws SQLException{
 		Silla si = new Silla();
 		String sql = "SELECT * FROM SILLA WHERE ID = '"+idSilla+"' AND IDSITIO = '"+idSitio+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
@@ -316,13 +316,13 @@ public class DAOCliente {
 			si.setFila(rs.getString("FILA"));
 			si.setNumero(rs.getString("NUMERO"));
 			si.setId(idSilla);
-			si.setLocalidad(Long.parseLong(rs.getString("IDLOCALIDAD")));
+			si.setLocalidad(Integer.parseInt(rs.getString("IDLOCALIDAD")));
 			si.setIdSitio(idSitio);
 		}
 		return si;
 	}
 
-	private boolean funcionRealizada(Long idFuncion, Long idEspectaculo) throws SQLException{
+	private boolean funcionRealizada(int idFuncion, int idEspectaculo) throws SQLException{
 		String sql = "SELECT REALIZADA FROM FUNCION WHERE ID='"+idFuncion+"' AND IDESPECTACULO = '"+idEspectaculo+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		recursos.add(ps);
@@ -336,7 +336,7 @@ public class DAOCliente {
 		return false;
 	}
 
-	public Recibo registrarCompra(Long idCliente, Long idFuncion, Long idEspectaculo, Long idSilla, Long idSitio, String abonada) throws Exception{
+	public Recibo registrarCompra(int idCliente, int idFuncion, int idEspectaculo, int idSilla, int idSitio, String abonada) throws Exception{
 		if (funcionRealizada(idFuncion, idEspectaculo)){
 			throw new Exception("La función ya fue realizada.");
 		}
@@ -360,9 +360,9 @@ public class DAOCliente {
 				recibo.setPrecio(precioNuevo);
 			}
 
-			recibo.setFuncion(de.obtenerFuncion(idEspectaculo, idFuncion, conn));
-
-			recibo.setSilla(silla);
+			recibo.setIdFuncion(idFuncion);
+			
+			recibo.setIdSilla(idSilla);
 
 
 			boolean numerada = rs.getString("NUMERADA").equals("t");
@@ -466,7 +466,7 @@ public class DAOCliente {
 		return recibo;
 	}
 
-	public ArrayList<Recibo> registrarCompraMultiple( Long idCliente,CompraBoleta[] cbs) throws Exception
+	public ArrayList<Recibo> registrarCompraMultiple( int idCliente,CompraBoleta[] cbs) throws Exception
 	{
 		ArrayList<Recibo> recibos= new ArrayList<>(); 
 		for(int i = 0; i<cbs.length; i++ )
@@ -477,7 +477,7 @@ public class DAOCliente {
 
 	}
 
-	public ArrayList<Recibo> registrarAbono(Long idCliente, CompraBoleta[]cbs) throws Exception{
+	public ArrayList<Recibo> registrarAbono(int idCliente, CompraBoleta[]cbs) throws Exception{
 		ArrayList<Recibo> recibos = new ArrayList<>();
 		for(int i =0; i< cbs.length; i++){
 			recibos.add(registrarCompra(idCliente, cbs[i].getIdFuncion(), cbs[i].getIdEspectaculo(), cbs[i].getIdSilla(), cbs[i].getIdSitio(), "t"));

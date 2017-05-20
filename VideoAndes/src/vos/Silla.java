@@ -7,7 +7,7 @@ public class Silla {
 	@JsonProperty(value = "id")
 	private long id;
 	@JsonProperty(value = "localidad")
-	private long localidad;
+	private int localidad;
 	@JsonProperty(value = "fila")
 	private String fila;
 	@JsonProperty (value = "numero")
@@ -26,10 +26,10 @@ public class Silla {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public long getLocalidad() {
+	public int getLocalidad() {
 		return localidad;
 	}
-	public void setLocalidad(long localidad) {
+	public void setLocalidad(int localidad) {
 		this.localidad = localidad;
 	}
 	public String getFila() {

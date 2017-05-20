@@ -551,7 +551,7 @@ public class FestivAndesMaster {
 		
 	}
 	
-	public Recibo generarCompra(long idCliente, long idFuncion, long idEspectaculo, long idSilla, long idSitio, String abonada) throws Exception {
+	public Recibo generarCompra(int idCliente, int idFuncion, int idEspectaculo, int idSilla, int idSitio, String abonada) throws Exception {
 		DAOCliente daoCliente = new DAOCliente();
 		Recibo r = new Recibo();
 		try 
@@ -584,7 +584,7 @@ public class FestivAndesMaster {
 	}
 	
 	
-	public ArrayList<Recibo> registrarCompraMultiple( Long idCliente,CompraBoleta[] cbs) throws Exception
+	public ArrayList<Recibo> registrarCompraMultiple( int idCliente,CompraBoleta[] cbs) throws Exception
 	{
 		DAOCliente daoCliente = new DAOCliente();
 		ArrayList<Recibo> rs = new ArrayList<>();
@@ -663,7 +663,7 @@ public class FestivAndesMaster {
 	
 	
 	
-	public ArrayList<Recibo> registrarAbono(Long idCliente, CompraBoleta[]cbs) throws Exception {
+	public ArrayList<Recibo> registrarAbono(int idCliente, CompraBoleta[]cbs) throws Exception {
 		DAOCliente daoCliente = new DAOCliente();
 		ArrayList<Recibo> rs = new ArrayList<>();
 		try 
