@@ -87,10 +87,10 @@ public class JMSManager implements MessageListener, ExceptionListener
 	private int numberApps;
 
 	/**
-	 * Referencia a la clase principal VideoAndesMaster para su uso.
+	 * Referencia a la clase principal FestivAndesMaster para su uso.
 	 * Se usa para responder a requerimientos que llegan de otras aplicaciones
 	 */
-	private VideoAndesMaster master;
+	private FestivAndesMaster master;
 
 	/////Queues:
 	
@@ -137,11 +137,11 @@ public class JMSManager implements MessageListener, ExceptionListener
 
 	/**
 	 * Método que inicializa el atributo de master
-	 * @param videoAndesMaster - la instancia de VideoAndesMaster. videoAndesMaster !=  null
+	 * @param festivAndesMaster - la instancia de FestivAndesMaster. festivAndesMaster !=  null
 	 * <b> post: </b> se ha inicializado el atributo  master
 	 */
-	public void setUpMaster(VideoAndesMaster videoAndesMaster){
-		this.master =  videoAndesMaster;
+	public void setUpMaster(FestivAndesMaster festivAndesMaster){
+		this.master =  festivAndesMaster;
 	}
 
 	/**
@@ -149,9 +149,9 @@ public class JMSManager implements MessageListener, ExceptionListener
 	 * @param videoAndesMaster - instancia que hace referencia a la clase principal VideoAndesMaster
 	 * @return JMSManager - instancia única de la clase
 	 */
-	public static JMSManager darInstacia(VideoAndesMaster videoAndesMaster){
+	public static JMSManager darInstacia(FestivAndesMaster festivAndesMaster){
 		instancia = instancia == null? new JMSManager() : instancia;
-		instancia.setUpMaster(videoAndesMaster);
+		instancia.setUpMaster(festivAndesMaster);
 		return instancia;
 	}
 
