@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -14,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import tm.FestivAndesMaster;
+import vos.FiltrosConsultaFunciones;
 import vos.Funcion;
 import vos.Funcion2;
 import vos.ReporteFuncion;
@@ -31,6 +34,23 @@ public class FuncionServices {
 
 	private String doErrorMessage(Exception e){
 		return "{ \"ERROR\": \""+ e.getMessage() + "\"}" ;
+	}
+	
+	@POST
+	@Path("/filtros")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darFuncionesFiltro(FiltrosConsultaFunciones filtro){
+		
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		List<Funcion2> funciones; 
+		try{
+			funciones = tm.darFuncionesFiltros(filtro);
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(funciones).build();
 	}
 	
 	@GET
@@ -65,21 +85,6 @@ public class FuncionServices {
 		return Response.status(200).entity(funciones).build();
 	}
 	
-	@GET
-	@Path("/fechas")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response darFuncionesFecha(@QueryParam("fecha") String fecha)
-	{
-		FestivAndesMaster tm = new FestivAndesMaster(getPath());
-		List<Funcion2> funciones; 
-		try{
-			funciones = tm.darFuncionesFecha(fecha);
-		}catch (Exception e) {
-			// TODO: handle exception
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(funciones).build();
-	}
 	
 	@GET
 	@Path("/categorias")

@@ -35,6 +35,7 @@ import vos.ClienteBueno;
 import vos.CompraBoleta;
 import vos.EspectaculoPopular;
 import vos.FiltrosBoletas;
+import vos.FiltrosConsultaFunciones;
 import vos.Funcion;
 import vos.Funcion2;
 import vos.InformeAsistencia;
@@ -170,7 +171,69 @@ public class FestivAndesMaster {
 
 		return funciones;
 	}
+	
+	public String cancelarCompania(String compania) throws SQLException{
+		String respuesta ="";
+		DAOAdministrador daoAdmin = new DAOAdministrador();
+		try{
+			this.conn = darConexion();
+			daoAdmin.setConn(conn);
+			respuesta = daoAdmin.cancelarCompania(compania);
+		}catch(SQLException e){
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}finally{
+			try {
+				daoAdmin.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		return respuesta;
 
+		
+	}
+
+	public List<Funcion2> darFuncionesFiltros(FiltrosConsultaFunciones filtro) throws Exception{
+		
+		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		DAOFuncion daoFuncion = new DAOFuncion();
+		try{
+			this.conn = darConexion();
+			daoFuncion.setConn(conn);
+			funciones = daoFuncion.darFuncionesFiltros(filtro);
+		}catch(SQLException e){
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}finally{
+			try {
+				daoFuncion.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+
+		return funciones;
+		
+	}
 	public List<Funcion2> darFuncionesIdioma(String idioma) throws Exception
 	{
 		List<Funcion2> funciones = new ArrayList<Funcion2>();
@@ -202,36 +265,7 @@ public class FestivAndesMaster {
 		return funciones;
 	}
 
-	public List<Funcion2> darFuncionesFecha(String fecha) throws Exception
-	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
-		DAOFuncion daoFuncion = new DAOFuncion();
-		try{
-			this.conn = darConexion();
-			daoFuncion.setConn(conn);
-			funciones = daoFuncion.darFuncionesFecha(fecha);
-		}catch(SQLException e){
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		}finally{
-			try {
-				daoFuncion.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-
-		return funciones;
-	}
+	
 
 	public List<Funcion2> darFuncionesCategoria(String categoria) throws Exception
 	{

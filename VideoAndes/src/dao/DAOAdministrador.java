@@ -60,6 +60,32 @@ public class DAOAdministrador {
 		this.conn = con;
 	}
 	
+	
+	public String cancelarCompania(String nombre) throws SQLException{
+		String respuesta =" se cancelo la compania";
+		String sql = "select id from companias where nombre = '"+nombre+"'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		System.out.println("sql stm: " + sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		String idCompania = rs.getString("ID");
+		
+		String sql2 = "select * from (funcion natural join compania_espectaculo)where idcompania = '"+idCompania+"'";
+		PreparedStatement ps2 = conn.prepareStatement(sql2);
+		System.out.println("sql2 stm: " + sql2);
+		recursos.add(ps2);
+		ResultSet rs2 = ps2.executeQuery();
+		while(rs2.next()){
+			String idEspectaculo = rs2.getString("IDESPECTACULO");
+			String sql3 = "update boleta set cancelada = 't' where idespectaculo = '"+idEspectaculo+"'";
+			PreparedStatement ps3 = conn.prepareStatement(sql3);
+			System.out.println("sql2 stm: " + sql3);
+			recursos.add(ps3);
+			ps3.executeQuery();
+		}
+		return respuesta;
+		
+	}
 	public ArrayList<NotaDebito> cancelarFuncion(Long idFuncion, Long idEspectaculo) throws Exception{
 		ArrayList<NotaDebito> devoluciones = new ArrayList<>();
 		String  sql = "select * from ((select * from (select * from boleta)"

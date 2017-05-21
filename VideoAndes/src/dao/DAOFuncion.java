@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import vos.Espectaculo;
+import vos.FiltrosConsultaFunciones;
 import vos.Funcion;
 import vos.Funcion2;
 import vos.ReporteFuncion;
@@ -56,6 +57,22 @@ public class DAOFuncion {
 	 */
 	public void setConn(Connection con){
 		this.conn = con;
+	}
+	
+	public List<Funcion2> darFuncionesFiltros(FiltrosConsultaFunciones filtro) throws SQLException, ParseException{
+		List<Funcion2> funciones = new ArrayList<>();
+		if(filtro.getIdioma() != null){
+			funciones = darFuncionesIdioma(filtro.getIdioma());
+		}else if (filtro.getCategoria() != null){
+			funciones = darFuncionesCategoria(filtro.getCategoria());
+		}else if(filtro.getNombreCompania() != null){
+			funciones = darFuncionesCompania(filtro.getNombreCompania());
+		}else if (filtro.getFechaInicial()!= null && filtro.getFechaFinal()!= null){
+			funciones = darFuncionesFecha(filtro.getFechaInicial(), filtro.getFechaFinal());
+		}
+		
+		return funciones;
+		
 	}
 
 	public List<Funcion2> darFuncionesCompania(String nombreCompania) throws SQLException, ParseException
@@ -155,18 +172,16 @@ public class DAOFuncion {
 		return funciones;
 	}
 
-	public List<Funcion2> darFuncionesFecha(String fecha) throws SQLException, ParseException
+	public List<Funcion2> darFuncionesFecha(String fechaInicial, String fechaFinal) throws SQLException, ParseException
 	{
 //		SimpleDateFormat formato = new SimpleDateFormat("dd/mm/yy");
 //		String fechaString = formato.format(fecha);
 		List<Funcion2> funciones = new ArrayList<Funcion2>();
 //		System.out.println(fechaString);
-		String sql = "SELECT ID,DIA,HORA,NOMBREESPC,IDIOMA,NOMBRELUGAR,IDSITIO,IDESPECTACULO FROM("
-				+ "(SELECT * FROM("
-				+ "(select * from FUNCION ) NATURAL JOIN"
-				+ "(SELECT ID AS IDESPECTACULO, NOMBRE AS NOMBREESPC, IDIOMA FROM ESPECTACULO)"
-				+ ")) NATURAL JOIN"
-				+ "(SELECT ID AS IDSITIO, NOMBRE AS NOMBRELUGAR FROM SITIO)) where DIA = '"+""+fecha+"'";
+		String sql ="SELECT ID,DIA,HORA,NOMBREESPC,IDIOMA,NOMBRELUGAR,IDSITIO,IDESPECTACULO FROM"
+				+ "((SELECT * FROM((select * from FUNCION ) NATURAL JOIN(SELECT ID AS IDESPECTACULO, NOMBRE AS NOMBREESPC, "
+				+ "IDIOMA FROM ESPECTACULO))) NATURAL JOIN(SELECT ID AS IDSITIO, NOMBRE AS NOMBRELUGAR FROM SITIO)) "
+				+ "where DIA between TO_DATE('"+fechaInicial+"', 'dd/mm/yy') and TO_DATE('"+fechaFinal+"', 'dd/mm/yy')";
 
 		System.out.println("sql stm: " + sql);
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
