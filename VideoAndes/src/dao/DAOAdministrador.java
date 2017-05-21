@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import vos.BoletaConsulta;
 import vos.ClienteBueno;
@@ -61,8 +62,9 @@ public class DAOAdministrador {
 	}
 	
 	
-	public String cancelarCompania(String nombre) throws SQLException{
-		String respuesta =" se cancelo la companiassssss";
+	public ArrayList<NotaDebito> cancelarCompania(String nombre) throws Exception{
+		
+		ArrayList<NotaDebito> notaDebito = new  ArrayList<>();
 		String sql = "select id from companias where nombre = '"+nombre+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		System.out.println("sql stm: " + sql);
@@ -76,14 +78,15 @@ public class DAOAdministrador {
 		recursos.add(ps2);
 		ResultSet rs2 = ps2.executeQuery();
 		while(rs2.next()){
-			String idEspectaculo = rs2.getString("IDESPECTACULO");
-			String sql3 = "update boleta set cancelada = 't' where idespectaculo = '"+idEspectaculo+"'";
-			PreparedStatement ps3 = conn.prepareStatement(sql3);
-			System.out.println("sql2 stm: " + sql3);
-			recursos.add(ps3);
-			ps3.executeQuery();
+			Long idEspectaculo = Long.parseLong(rs2.getString("IDESPECTACULO"));
+			Long idFuncion = Long.parseLong(rs2.getString("ID"));
+			ArrayList<NotaDebito> array = cancelarFuncion(idFuncion, idEspectaculo);
+			for(int i =0; i< array.size();i++){
+				notaDebito.add(array.get(i));
+			}
+			
 		}
-		return respuesta;
+		return notaDebito;
 		
 	}
 	public ArrayList<NotaDebito> cancelarFuncion(Long idFuncion, Long idEspectaculo) throws Exception{

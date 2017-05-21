@@ -17,6 +17,7 @@ import tm.FestivAndesMaster;
 import vos.Asistencia;
 import vos.BoletaConsulta;
 import vos.ClienteBueno;
+import vos.Compania;
 import vos.FiltrosBoletas;
 import vos.Funcion2;
 import vos.InformeAsistencia;
@@ -75,6 +76,21 @@ public class AdminServices {
 		}
 		return Response.status(200).entity(informe).build();
 		
+	}
+	@POST
+	@Path("{idUsuario}/cancelarCompania")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response cancelarCompania(Compania compa){
+		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+		ArrayList<NotaDebito> res= new ArrayList<>();
+		try{
+			res = tm.cancelarCompania(compa.getNombre());
+		}catch (Exception e) {
+			// TODO: handle exception
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(res).build();
 	}
 	
 	@GET

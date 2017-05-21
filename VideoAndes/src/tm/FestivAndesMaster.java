@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.sun.security.ntlm.Client;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import dao.DAOAdministrador;
 import dao.DAOCliente;
@@ -172,8 +173,8 @@ public class FestivAndesMaster {
 		return funciones;
 	}
 	
-	public String cancelarCompania(String compania) throws SQLException{
-		String respuesta ="";
+	public  ArrayList<NotaDebito> cancelarCompania(String compania) throws Exception{
+		ArrayList<NotaDebito> respuesta =new ArrayList<>();
 		DAOAdministrador daoAdmin = new DAOAdministrador();
 		try{
 			this.conn = darConexion();
