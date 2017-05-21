@@ -62,7 +62,7 @@ public class DAOAdministrador {
 	
 	
 	public String cancelarCompania(String nombre) throws SQLException{
-		String respuesta =" se cancelo la compania";
+		String respuesta =" se cancelo la companiassssss";
 		String sql = "select id from companias where nombre = '"+nombre+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		System.out.println("sql stm: " + sql);
