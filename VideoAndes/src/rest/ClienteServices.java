@@ -125,7 +125,7 @@ public class ClienteServices {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	
-	public Response registrarCompra(@PathParam("idCliente") Long idCliente, CompraBoleta cb)
+	public Response registrarCompra(@PathParam("idCliente") int idCliente, CompraBoleta cb)
 	{
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		Recibo r = new Recibo();
@@ -161,7 +161,7 @@ public class ClienteServices {
 	@Path("{idCliente}/compraMultiple")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response registrarCompraMultiple(@PathParam("idCliente") Long idCliente, CompraBoleta[]cbs)
+	public Response registrarCompraMultiple(@PathParam("idCliente") int idCliente, CompraBoleta[]cbs)
 	{
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		ArrayList<Recibo> rs = new ArrayList<>();
@@ -178,7 +178,7 @@ public class ClienteServices {
 	@Path("{idCliente}/abonar")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response registrarAbono(@PathParam("idCliente")Long idCliente, CompraBoleta[] cbs){
+	public Response registrarAbono(@PathParam("idCliente")int idCliente, CompraBoleta[] cbs){
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		ArrayList<Recibo> rs = new ArrayList<>();
 		try{

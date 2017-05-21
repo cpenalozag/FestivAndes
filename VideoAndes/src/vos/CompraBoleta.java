@@ -4,55 +4,55 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class CompraBoleta {
 	@JsonProperty(value = "idFuncion")
-	private long idFuncion;
+	private int idFuncion;
 	@JsonProperty(value = "idEspectaculo")
-	private long idEspectaculo;
+	private int idEspectaculo;
 	@JsonProperty(value = "idCliente")
-	private long idCliente;
+	private int idCliente;
 	@JsonProperty(value = "idSitio")
-	private long idSitio;
+	private int idSitio;
 	@JsonProperty(value = "idSilla")
-	private long idSilla;
+	private int idSilla;
 	
 	public CompraBoleta(){}
 
-	public long getIdFuncion() {
+	public int getIdFuncion() {
 		return idFuncion;
 	}
 
-	public void setIdFuncion(long idFuncion) {
+	public void setIdFuncion(int idFuncion) {
 		this.idFuncion = idFuncion;
 	}
 
-	public long getIdEspectaculo() {
+	public int getIdEspectaculo() {
 		return idEspectaculo;
 	}
 
-	public void setIdEspectaculo(long idEspectaculo) {
+	public void setIdEspectaculo(int idEspectaculo) {
 		this.idEspectaculo = idEspectaculo;
 	}
 
-	public long getIdCliente() {
+	public int getIdCliente() {
 		return idCliente;
 	}
 
-	public void setIdCliente(long idCliente) {
+	public void setIdCliente(int idCliente) {
 		this.idCliente = idCliente;
 	}
 
-	public long getIdSitio() {
+	public int getIdSitio() {
 		return idSitio;
 	}
 
-	public void setIdSitio(long idSitio) {
+	public void setIdSitio(int idSitio) {
 		this.idSitio = idSitio;
 	}
 
-	public long getIdSilla() {
+	public int getIdSilla() {
 		return idSilla;
 	}
 
-	public void setIdSilla(long idSilla) {
+	public void setIdSilla(int idSilla) {
 		this.idSilla = idSilla;
 	}
 	
