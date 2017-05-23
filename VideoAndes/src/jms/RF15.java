@@ -159,6 +159,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 					Topic t = new RMQDestination("", "RFC11.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
+//				7fdssdsfdsfd
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
 					ArrayList<Recibo> reci = mapper.readValue(ex.getPayload(), ArrayList.class);
