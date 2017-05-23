@@ -173,13 +173,13 @@ public class FestivAndesMaster {
 		return funciones;
 	}
 	
-	public  ArrayList<NotaDebito> cancelarCompania(String compania) throws Exception{
+	public  ArrayList<NotaDebito> cancelarCompania(int idCompania) throws Exception{
 		ArrayList<NotaDebito> respuesta =new ArrayList<>();
 		DAOAdministrador daoAdmin = new DAOAdministrador();
 		try{
 			this.conn = darConexion();
 			daoAdmin.setConn(conn);
-			respuesta = daoAdmin.cancelarCompania(compania);
+			respuesta = daoAdmin.cancelarCompania(idCompania);
 		}catch(SQLException e){
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();

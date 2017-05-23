@@ -78,14 +78,14 @@ public class AdminServices {
 		
 	}
 	@POST
-	@Path("{idUsuario}/cancelarCompania")
+	@Path("{idUsuario}/cancelarCompania/{idCompania}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response cancelarCompania(Compania compa){
+	public Response cancelarCompania(@PathParam("idCompania") int idCompania){
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		ArrayList<NotaDebito> res= new ArrayList<>();
 		try{
-			res = tm.cancelarCompania(compa.getNombre());
+			res = tm.cancelarCompania(idCompania);
 		}catch (Exception e) {
 			// TODO: handle exception
 			return Response.status(500).entity(doErrorMessage(e)).build();
