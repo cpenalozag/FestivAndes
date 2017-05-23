@@ -25,9 +25,12 @@ import com.rabbitmq.jms.admin.RMQDestination;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import jms.RF15;
+import jms.RFC13;
 import tm.FestivAndesMaster;
 import vos.BoletaConsulta;
 import vos.CompraBoleta;
+import vos.FiltrosConsultaFunciones;
+import vos.FuncionBasica;
 import vos.ListaCompraBoleta;
 import vos.ListaRecibo;
 import vos.Recibo;
@@ -47,6 +50,7 @@ public class VideoAndesDistributed
 	private TopicConnectionFactory factory;
 
 	private RF15 rf15;
+	private RFC13 rfc13;
 
 	private static String path;
 
@@ -56,15 +60,15 @@ public class VideoAndesDistributed
 		InitialContext ctx = new InitialContext();
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		rf15 = new RF15(factory, ctx);
+		rfc13 = new RFC13(factory, ctx);
 		rf15.start();
-
-
-
+		rfc13.start();
 	}
 
 	public void stop() throws JMSException
 	{
 		rf15.close();
+		rfc13.close();
 	}
 
 	/**
@@ -123,6 +127,12 @@ public class VideoAndesDistributed
 	public ArrayList<Recibo> getRemoteRF15(ArrayList<CompraBoleta>cbs) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
 		return rf15.getRemoteRF15(cbs);
 		
+	}
+	public ArrayList<FuncionBasica> getLocalRFC13(FiltrosConsultaFunciones filtros) throws Exception{
+		return (ArrayList<FuncionBasica>) tm.darFuncionesFiltros(filtros);
+	}
+	public ArrayList<FuncionBasica> getRemoteRFC13(FiltrosConsultaFunciones filtros) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
+		return rfc13.getRemoteRFC13(filtros);
 	}
 	
 }

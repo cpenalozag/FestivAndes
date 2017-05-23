@@ -88,7 +88,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println(id);
-		ExchangeMsg msg = new ExchangeMsg("RFC11.app1", APP, payload, status, id);
+		ExchangeMsg msg = new ExchangeMsg("RF15.app1", APP, payload, status, id);
 		TopicPublisher topicPublisher = topicSession.createPublisher(dest);
 		topicPublisher.setDeliveryMode(DeliveryMode.PERSISTENT);
 		TextMessage txtMsg = topicSession.createTextMessage();
@@ -127,8 +127,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 
 		if(answer.isEmpty())
 			throw new NonReplyException("Non Response");
-		ListaRecibo res = new ListaRecibo();
-		res.setListaRecibos(answer);
+		
 		
 		return answer;
 	}
@@ -156,7 +155,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 					VideoAndesDistributed dtm = VideoAndesDistributed.getInstance();
 					ArrayList<Recibo> recibos = dtm.getLocalRF15(boletas);
 					String payload = mapper.writeValueAsString(recibos);
-					Topic t = new RMQDestination("", "RFC11.test", ex.getRoutingKey(), "", false);
+					Topic t = new RMQDestination("", "RF15.test", ex.getRoutingKey(), "", false);
 					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 //				7fdssdsfdsfd
@@ -191,7 +190,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 	@Override
 	public void onException(JMSException arg0) {
 		// TODO Auto-generated method stub
-		
+		System.out.println(arg0);
 	}
 	
 
