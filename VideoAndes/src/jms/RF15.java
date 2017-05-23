@@ -1,5 +1,6 @@
 package jms;
 
+import java.awt.List;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,17 +25,22 @@ import javax.naming.NamingException;
 import javax.xml.bind.DatatypeConverter;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import dtm.NonReplyException;
+import dtm.VideoAndesDistributed;
 import vos.BoletaConsulta;
 import vos.CompraBoleta;
 import vos.ExchangeMsg;
 import vos.ListaCompraBoleta;
+import vos.ListaRecibo;
+import vos.Recibo;
 
 public class RF15 implements MessageListener, ExceptionListener{
 	
@@ -52,7 +58,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 	private Topic globalTopic;
 	private Topic localTopic;
 	
-	private ArrayList<CompraBoleta> answer = new ArrayList<>();
+	private ArrayList<Recibo> answer = new ArrayList<>();
 	
 	public RF15(TopicConnectionFactory factory, InitialContext ctx) throws JMSException, NamingException {
 		
@@ -93,7 +99,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 		topicPublisher.publish(txtMsg);
 	}
 	
-	public ListaCompraBoleta getRemoteRF15(CompraBoleta[]compraBoletas) throws NoSuchAlgorithmException, JsonGenerationException, JsonMappingException, IOException, JMSException, InterruptedException, NonReplyException{
+	public ArrayList<Recibo> getRemoteRF15(CompraBoleta[]compraBoletas) throws NoSuchAlgorithmException, JsonGenerationException, JsonMappingException, IOException, JMSException, InterruptedException, NonReplyException{
 		
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();
@@ -121,9 +127,10 @@ public class RF15 implements MessageListener, ExceptionListener{
 
 		if(answer.isEmpty())
 			throw new NonReplyException("Non Response");
-		ListaCompraBoleta res = new ListaCompraBoleta(answer);
+		ListaRecibo res = new ListaRecibo();
+		res.setListaRecibos(answer);
 		
-		return res;
+		return answer;
 	}
 
 
@@ -145,17 +152,17 @@ public class RF15 implements MessageListener, ExceptionListener{
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
-//					BoletaConsulta rf15 = mapper.readValue(ex.getPayload(), BoletaConsulta.class);
-//					VideoAndesDistributed dtm = VideoAndesDistributed.getInstance();
-//					ListaVuelosComun vuelos = dtm.getLocalArribosSalidas(rfc11);
-//					String payload = mapper.writeValueAsString(vuelos);
-//					Topic t = new RMQDestination("", "RFC11.test", ex.getRoutingKey(), "", false);
-//					sendMessage(payload, REQUEST_ANSWER, t, id);
+					ArrayList<CompraBoleta> boletas = mapper.readValue(ex.getPayload(), ArrayList.class);
+					VideoAndesDistributed dtm = VideoAndesDistributed.getInstance();
+					ArrayList<Recibo> recibos = dtm.getLocalRF15(boletas);
+					String payload = mapper.writeValueAsString(recibos);
+					Topic t = new RMQDestination("", "RFC11.test", ex.getRoutingKey(), "", false);
+					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
-//					ListaVuelosComun v = mapper.readValue(ex.getPayload(), ListaVuelosComun.class);
-//					answer.addAll(v.listaVuelos);
+					ArrayList<Recibo> reci = mapper.readValue(ex.getPayload(), ArrayList.class);
+					answer.addAll(reci);
 				}
 			}
 
@@ -178,6 +185,8 @@ public class RF15 implements MessageListener, ExceptionListener{
 
 		
 	}
+	
+	
 	@Override
 	public void onException(JMSException arg0) {
 		// TODO Auto-generated method stub

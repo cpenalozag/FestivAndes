@@ -39,6 +39,7 @@ import vos.FiltrosBoletas;
 import vos.FiltrosConsultaFunciones;
 import vos.Funcion;
 import vos.Funcion2;
+import vos.FuncionBasica;
 import vos.InformeAsistencia;
 import vos.NotaDebito;
 import vos.OperadorLogistico;
@@ -142,36 +143,36 @@ public class FestivAndesMaster {
 	///////Transacciones////////////////////
 	////////////////////////////////////////
 
-	public List<Funcion2> darFuncionesCompania(String nombre) throws Exception
-	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
-             DAOFuncion daoFuncion = new DAOFuncion();
-		try{
-			this.conn = darConexion();
-			daoFuncion.setConn(conn);
-			funciones = daoFuncion.darFuncionesCompania(nombre);
-		}catch(SQLException e){
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		}finally{
-			try {
-				daoFuncion.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-
-		return funciones;
-	}
+//	public List<Funcion2> darFuncionesCompania(String nombre) throws Exception
+//	{
+//		List<Funcion2> funciones = new ArrayList<Funcion2>();
+//             DAOFuncion daoFuncion = new DAOFuncion();
+//		try{
+//			this.conn = darConexion();
+//			daoFuncion.setConn(conn);
+//			funciones = daoFuncion.darFuncionesCompania(nombre);
+//		}catch(SQLException e){
+//			System.err.println("SQLException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		} catch (Exception e) {
+//			System.err.println("GeneralException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		}finally{
+//			try {
+//				daoFuncion.cerrarRecursos();
+//				if(this.conn!=null)
+//					this.conn.close();
+//			} catch (SQLException exception) {
+//				System.err.println("SQLException closing resources:" + exception.getMessage());
+//				exception.printStackTrace();
+//				throw exception;
+//			}
+//		}
+//
+//		return funciones;
+//	}
 	
 	public  ArrayList<NotaDebito> cancelarCompania(String compania) throws Exception{
 		ArrayList<NotaDebito> respuesta =new ArrayList<>();
@@ -204,9 +205,9 @@ public class FestivAndesMaster {
 		
 	}
 
-	public List<Funcion2> darFuncionesFiltros(FiltrosConsultaFunciones filtro) throws Exception{
+	public List<FuncionBasica> darFuncionesFiltros(FiltrosConsultaFunciones filtro) throws Exception{
 		
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		List<FuncionBasica> funciones = new ArrayList<FuncionBasica>();
 		DAOFuncion daoFuncion = new DAOFuncion();
 		try{
 			this.conn = darConexion();
@@ -235,100 +236,100 @@ public class FestivAndesMaster {
 		return funciones;
 		
 	}
-	public List<Funcion2> darFuncionesIdioma(String idioma) throws Exception
-	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
-		DAOFuncion daoFuncion = new DAOFuncion();
-		try{
-			this.conn = darConexion();
-			daoFuncion.setConn(conn);
-			funciones = daoFuncion.darFuncionesIdioma(idioma);
-		}catch(SQLException e){
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		}finally{
-			try {
-				daoFuncion.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-
-		return funciones;
-	}
+//	public List<Funcion2> darFuncionesIdioma(String idioma) throws Exception
+//	{
+//		List<Funcion2> funciones = new ArrayList<Funcion2>();
+//		DAOFuncion daoFuncion = new DAOFuncion();
+//		try{
+//			this.conn = darConexion();
+//			daoFuncion.setConn(conn);
+//			funciones = daoFuncion.darFuncionesIdioma(idioma);
+//		}catch(SQLException e){
+//			System.err.println("SQLException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		} catch (Exception e) {
+//			System.err.println("GeneralException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		}finally{
+//			try {
+//				daoFuncion.cerrarRecursos();
+//				if(this.conn!=null)
+//					this.conn.close();
+//			} catch (SQLException exception) {
+//				System.err.println("SQLException closing resources:" + exception.getMessage());
+//				exception.printStackTrace();
+//				throw exception;
+//			}
+//		}
+//
+//		return funciones;
+//	}
 
 	
 
-	public List<Funcion2> darFuncionesCategoria(String categoria) throws Exception
-	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
-		DAOFuncion daoFuncion = new DAOFuncion();
-		try{
-			this.conn = darConexion();
-			daoFuncion.setConn(conn);
-			funciones = daoFuncion.darFuncionesCategoria(categoria);
-		}catch(SQLException e){
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		}finally{
-			try {
-				daoFuncion.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
+//	public List<Funcion2> darFuncionesCategoria(String categoria) throws Exception
+//	{
+//		List<Funcion2> funciones = new ArrayList<Funcion2>();
+//		DAOFuncion daoFuncion = new DAOFuncion();
+//		try{
+//			this.conn = darConexion();
+//			daoFuncion.setConn(conn);
+//			funciones = daoFuncion.darFuncionesCategoria(categoria);
+//		}catch(SQLException e){
+//			System.err.println("SQLException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		} catch (Exception e) {
+//			System.err.println("GeneralException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		}finally{
+//			try {
+//				daoFuncion.cerrarRecursos();
+//				if(this.conn!=null)
+//					this.conn.close();
+//			} catch (SQLException exception) {
+//				System.err.println("SQLException closing resources:" + exception.getMessage());
+//				exception.printStackTrace();
+//				throw exception;
+//			}
+//		}
+//
+//		return funciones;
+//	}
 
-		return funciones;
-	}
-
-	public List<Funcion2> darFuncionesTraducidas(Boolean tradu) throws Exception
-	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
-		DAOFuncion daoFuncion = new DAOFuncion();
-		try{
-			this.conn = darConexion();
-			daoFuncion.setConn(conn);
-			funciones = daoFuncion.darFuncionesTraducidas(tradu);
-		}catch(SQLException e){
-			System.err.println("SQLException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			System.err.println("GeneralException:" + e.getMessage());
-			e.printStackTrace();
-			throw e;
-		}finally{
-			try {
-				daoFuncion.cerrarRecursos();
-				if(this.conn!=null)
-					this.conn.close();
-			} catch (SQLException exception) {
-				System.err.println("SQLException closing resources:" + exception.getMessage());
-				exception.printStackTrace();
-				throw exception;
-			}
-		}
-
-		return funciones;
-	}
+//	public List<Funcion2> darFuncionesTraducidas(Boolean tradu) throws Exception
+//	{
+//		List<Funcion2> funciones = new ArrayList<Funcion2>();
+//		DAOFuncion daoFuncion = new DAOFuncion();
+//		try{
+//			this.conn = darConexion();
+//			daoFuncion.setConn(conn);
+//			funciones = daoFuncion.darFuncionesTraducidas(tradu);
+//		}catch(SQLException e){
+//			System.err.println("SQLException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		} catch (Exception e) {
+//			System.err.println("GeneralException:" + e.getMessage());
+//			e.printStackTrace();
+//			throw e;
+//		}finally{
+//			try {
+//				daoFuncion.cerrarRecursos();
+//				if(this.conn!=null)
+//					this.conn.close();
+//			} catch (SQLException exception) {
+//				System.err.println("SQLException closing resources:" + exception.getMessage());
+//				exception.printStackTrace();
+//				throw exception;
+//			}
+//		}
+//
+//		return funciones;
+//	}
 
 	public Sitio2 darSitio(String nombre) throws Exception
 	{
@@ -698,7 +699,7 @@ public class FestivAndesMaster {
 	
 	
 	
-	public ArrayList<Recibo> registrarAbono(int idCliente, CompraBoleta[]cbs) throws Exception {
+	public ArrayList<Recibo> registrarAbono(int idCliente, ArrayList<CompraBoleta>cbs) throws Exception {
 		DAOCliente daoCliente = new DAOCliente();
 		ArrayList<Recibo> rs = new ArrayList<>();
 		try 
