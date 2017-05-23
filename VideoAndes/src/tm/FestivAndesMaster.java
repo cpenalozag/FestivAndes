@@ -174,13 +174,13 @@ public class FestivAndesMaster {
 //		return funciones;
 //	}
 	
-	public  ArrayList<NotaDebito> cancelarCompania(String compania) throws Exception{
+	public  ArrayList<NotaDebito> cancelarCompania(String nombreCompania) throws Exception{
 		ArrayList<NotaDebito> respuesta =new ArrayList<>();
 		DAOAdministrador daoAdmin = new DAOAdministrador();
 		try{
 			this.conn = darConexion();
 			daoAdmin.setConn(conn);
-			respuesta = daoAdmin.cancelarCompania(compania);
+			respuesta = daoAdmin.cancelarCompania(nombreCompania);
 		}catch(SQLException e){
 			System.err.println("SQLException:" + e.getMessage());
 			e.printStackTrace();
@@ -884,7 +884,7 @@ public class FestivAndesMaster {
 		
 	}
 	
-	public ArrayList<RentabilidadCompania> generarReporteRentabilidadCompania(Long idCompania, RangoFechas rango)throws Exception {
+	public ArrayList<RentabilidadCompania> generarReporteRentabilidadCompania(String nombreCompania, RangoFechas rango)throws Exception {
 		DAOCompania dao = new DAOCompania();
 		ArrayList<RentabilidadCompania> reportes = new ArrayList<RentabilidadCompania>();
 		try 
@@ -892,7 +892,7 @@ public class FestivAndesMaster {
 			//////Transacción
 			this.conn = darConexion();
 			dao.setConn(conn);
-			reportes = dao.generarReporte(idCompania, rango.getFechaInicial(), rango.getFechaFinal());
+			reportes = dao.generarReporte(nombreCompania, rango.getFechaInicial(), rango.getFechaFinal());
 			conn.commit();
 
 		} catch (SQLException e) {

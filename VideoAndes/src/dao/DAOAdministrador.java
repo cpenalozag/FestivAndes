@@ -62,10 +62,10 @@ public class DAOAdministrador {
 	}
 	
 	
-	public ArrayList<NotaDebito> cancelarCompania(String nombre) throws Exception{
+	public ArrayList<NotaDebito> cancelarCompania(String nombreCompania) throws Exception{
 		
 		ArrayList<NotaDebito> notaDebito = new  ArrayList<>();
-		String sql = "select id from companias where nombre = '"+nombre+"'";
+		String sql = "select id from companias where nombre = '"+nombreCompania+"'";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		System.out.println("sql stm: " + sql);
 		recursos.add(ps);
