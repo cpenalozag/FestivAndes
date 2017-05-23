@@ -477,10 +477,10 @@ public class DAOCliente {
 
 	}
 
-	public ArrayList<Recibo> registrarAbono(int idCliente, CompraBoleta[]cbs) throws Exception{
+	public ArrayList<Recibo> registrarAbono(int idCliente, ArrayList<CompraBoleta>cbs) throws Exception{
 		ArrayList<Recibo> recibos = new ArrayList<>();
-		for(int i =0; i< cbs.length; i++){
-			recibos.add(registrarCompra(idCliente, cbs[i].getIdFuncion(), cbs[i].getIdEspectaculo(), cbs[i].getIdSilla(), cbs[i].getIdSitio(), "t"));
+		for(int i =0; i< cbs.size(); i++){
+			recibos.add(registrarCompra(idCliente, cbs.get(i).getIdFuncion(), cbs.get(i).getIdEspectaculo(), cbs.get(i).getIdSilla(), cbs.get(i).getIdSitio(), "t"));
 		}
 		return recibos;
 	}

@@ -14,6 +14,9 @@ public class CompraBoleta {
 	@JsonProperty(value = "idSilla")
 	private int idSilla;
 	
+	@JsonProperty(value ="app")
+	private int app;
+	
 	public CompraBoleta(){}
 
 	public int getIdFuncion() {
@@ -54,6 +57,14 @@ public class CompraBoleta {
 
 	public void setIdSilla(int idSilla) {
 		this.idSilla = idSilla;
+	}
+
+	public int getApp() {
+		return app;
+	}
+
+	public void setApp(int app) {
+		this.app = app;
 	}
 	
 	

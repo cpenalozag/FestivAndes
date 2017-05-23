@@ -9,10 +9,10 @@ public class FuncionBasica {
 	private String dia;
 	@JsonProperty (value = "hora")
 	private int hora;
-	@JsonProperty(value = "espectaculo")
-	private EspectaculoBasica espectaculo;
-	@JsonProperty(value = "sitio")
-	private SitioBasica sitio;
+	@JsonProperty(value = "idEspectaculo")
+	private int espectaculo;
+	@JsonProperty(value = "idSitio")
+	private int sitio;
 	public long getId() {
 		return id;
 	}
@@ -31,16 +31,16 @@ public class FuncionBasica {
 	public void setHora(int hora) {
 		this.hora = hora;
 	}
-	public EspectaculoBasica getEspectaculo() {
+	public int getEspectaculo() {
 		return espectaculo;
 	}
-	public void setEspectaculo(EspectaculoBasica espectaculo) {
+	public void setEspectaculo(int espectaculo) {
 		this.espectaculo = espectaculo;
 	}
-	public SitioBasica getSitio() {
+	public int getSitio() {
 		return sitio;
 	}
-	public void setSitio(SitioBasica sitio) {
+	public void setSitio(int sitio) {
 		this.sitio = sitio;
 	}
 	

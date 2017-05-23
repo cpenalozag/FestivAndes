@@ -19,6 +19,7 @@ import tm.FestivAndesMaster;
 import vos.FiltrosConsultaFunciones;
 import vos.Funcion;
 import vos.Funcion2;
+import vos.FuncionBasica;
 import vos.ReporteFuncion;
 
 @Path("funciones")
@@ -43,7 +44,7 @@ public class FuncionServices {
 	public Response darFuncionesFiltro(FiltrosConsultaFunciones filtro){
 		
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
-		List<Funcion2> funciones; 
+		List<FuncionBasica> funciones; 
 		try{
 			funciones = tm.darFuncionesFiltros(filtro);
 		}catch (Exception e) {
@@ -53,70 +54,70 @@ public class FuncionServices {
 		return Response.status(200).entity(funciones).build();
 	}
 	
-	@GET
-	@Path("/idiomas")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response darFuncionesIdioma(@QueryParam("idioma")String idioma)
-	{
-		FestivAndesMaster tm = new FestivAndesMaster(getPath());
-		List<Funcion2> funciones; 
-		try{
-			funciones = tm.darFuncionesIdioma(idioma);
-		}catch (Exception e) {
-			// TODO: handle exception
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(funciones).build();
-	}
-	
-	@GET
-	@Path("/companias")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response darFuncionesCompania(@QueryParam("compania")String compania)
-	{
-		FestivAndesMaster tm = new FestivAndesMaster(getPath());
-		List<Funcion2> funciones; 
-		try{
-			funciones = tm.darFuncionesCompania(compania);
-		}catch (Exception e) {
-			// TODO: handle exception
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(funciones).build();
-	}
-	
-	
-	@GET
-	@Path("/categorias")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response darFuncionesCategoria(@QueryParam("categoria") String categoria)
-	{
-		FestivAndesMaster tm = new FestivAndesMaster(getPath());
-		List<Funcion2> funciones; 
-		try{
-			funciones = tm.darFuncionesCategoria(categoria);
-		}catch (Exception e) {
-			// TODO: handle exception
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(funciones).build();
-	}
-	
-	@GET
-	@Path("/traduccion")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response darFuncionesTraducidas(@QueryParam("tradu") Boolean tradu)
-	{
-		FestivAndesMaster tm = new FestivAndesMaster(getPath());
-		List<Funcion2> funciones; 
-		try{
-			funciones = tm.darFuncionesTraducidas(tradu);
-		}catch (Exception e) {
-			// TODO: handle exception
-			return Response.status(500).entity(doErrorMessage(e)).build();
-		}
-		return Response.status(200).entity(funciones).build();
-	}
+//	@GET
+//	@Path("/idiomas")
+//	@Produces({ MediaType.APPLICATION_JSON })
+//	public Response darFuncionesIdioma(@QueryParam("idioma")String idioma)
+//	{
+//		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+//		List<Funcion2> funciones; 
+//		try{
+//			funciones = tm.darFuncionesIdioma(idioma);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//			return Response.status(500).entity(doErrorMessage(e)).build();
+//		}
+//		return Response.status(200).entity(funciones).build();
+//	}
+//	
+//	@GET
+//	@Path("/companias")
+//	@Produces({ MediaType.APPLICATION_JSON })
+//	public Response darFuncionesCompania(@QueryParam("compania")String compania)
+//	{
+//		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+//		List<Funcion2> funciones; 
+//		try{
+//			funciones = tm.darFuncionesCompania(compania);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//			return Response.status(500).entity(doErrorMessage(e)).build();
+//		}
+//		return Response.status(200).entity(funciones).build();
+//	}
+//	
+//	
+//	@GET
+//	@Path("/categorias")
+//	@Produces({ MediaType.APPLICATION_JSON })
+//	public Response darFuncionesCategoria(@QueryParam("categoria") String categoria)
+//	{
+//		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+//		List<Funcion2> funciones; 
+//		try{
+//			funciones = tm.darFuncionesCategoria(categoria);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//			return Response.status(500).entity(doErrorMessage(e)).build();
+//		}
+//		return Response.status(200).entity(funciones).build();
+//	}
+//	
+//	@GET
+//	@Path("/traduccion")
+//	@Produces({ MediaType.APPLICATION_JSON })
+//	public Response darFuncionesTraducidas(@QueryParam("tradu") Boolean tradu)
+//	{
+//		FestivAndesMaster tm = new FestivAndesMaster(getPath());
+//		List<Funcion2> funciones; 
+//		try{
+//			funciones = tm.darFuncionesTraducidas(tradu);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//			return Response.status(500).entity(doErrorMessage(e)).build();
+//		}
+//		return Response.status(200).entity(funciones).build();
+//	}
 	
 	@GET
 	@Path("{id}/reporte/{idFun}")

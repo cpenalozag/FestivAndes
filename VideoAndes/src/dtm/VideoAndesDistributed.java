@@ -2,6 +2,7 @@ package dtm;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import javax.jms.JMSException;
 import javax.jms.Queue;
@@ -21,27 +22,32 @@ import org.codehaus.jackson.map.JsonMappingException;
 
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import jms.RF15;
 import tm.FestivAndesMaster;
+import vos.BoletaConsulta;
+import vos.CompraBoleta;
 import vos.ListaCompraBoleta;
+import vos.ListaRecibo;
+import vos.Recibo;
 
 
 public class VideoAndesDistributed 
 {
 	private final static String QUEUE_NAME = "java:global/RMQAppQueue";
 	private final static String MQ_CONNECTION_NAME = "java:global/RMQClient";
-	
+
 	private static VideoAndesDistributed instance;
-	
+
 	private FestivAndesMaster tm;
-	
+
 	private QueueConnectionFactory queueFactory;
-	
+
 	private TopicConnectionFactory factory;
-	
+
 	private RF15 rf15;
-	
+
 	private static String path;
 
 
@@ -51,16 +57,16 @@ public class VideoAndesDistributed
 		factory = (RMQConnectionFactory) ctx.lookup(MQ_CONNECTION_NAME);
 		rf15 = new RF15(factory, ctx);
 		rf15.start();
-		
-		
-		
+
+
+
 	}
-	
+
 	public void stop() throws JMSException
 	{
 		rf15.close();
 	}
-	
+
 	/**
 	 * Método que retorna el path de la carpeta WEB-INF/ConnectionData en el deploy actual dentro del servidor.
 	 * @return path de la carpeta WEB-INF/ConnectionData en el deploy actual.
@@ -68,17 +74,17 @@ public class VideoAndesDistributed
 	public static void setPath(String p) {
 		path = p;
 	}
-	
+
 	public void setUpTransactionManager(FestivAndesMaster tm)
 	{
-	   this.tm = tm;
+		this.tm = tm;
 	}
-	
+
 	private static VideoAndesDistributed getInst()
 	{
 		return instance;
 	}
-	
+
 	public static VideoAndesDistributed getInstance(FestivAndesMaster tm)
 	{
 		if(instance == null)
@@ -95,7 +101,7 @@ public class VideoAndesDistributed
 		instance.setUpTransactionManager(tm);
 		return instance;
 	}
-	
+
 	public static VideoAndesDistributed getInstance()
 	{
 		if(instance == null)
@@ -110,14 +116,13 @@ public class VideoAndesDistributed
 		FestivAndesMaster tm = new FestivAndesMaster(path);
 		return getInstance(tm);
 	}
-	
-	public ListaCompraBoleta getRf15() throws Exception
-	{
-		return tm.darVideosLocal();
+
+	public ArrayList<Recibo> getLocalRF15(ArrayList<CompraBoleta>cbs) throws Exception{
+		return tm.registrarAbono(cbs.get(0).getIdCliente(), cbs);
+	}
+	public ArrayList<Recibo> getRemoteRF15(ArrayList<CompraBoleta>cbs) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
+		return rf15.getRemoteRF15(cbs);
+		
 	}
 	
-	public ListaVideos getRemoteVideos() throws JsonGenerationException, JsonMappingException, JMSException, IOException, NonReplyException, InterruptedException, NoSuchAlgorithmException
-	{
-		return allVideosMQ.getRemoteVideos();
-	}
 }

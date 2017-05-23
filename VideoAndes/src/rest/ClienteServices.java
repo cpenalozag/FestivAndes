@@ -178,7 +178,7 @@ public class ClienteServices {
 	@Path("{idCliente}/abonar")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response registrarAbono(@PathParam("idCliente")int idCliente, CompraBoleta[] cbs){
+	public Response registrarAbono(@PathParam("idCliente")int idCliente, ArrayList<CompraBoleta>cbs){
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		ArrayList<Recibo> rs = new ArrayList<>();
 		try{
