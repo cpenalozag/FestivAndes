@@ -53,8 +53,16 @@ public class DAOCompania {
 	}
 	
 
-	public ArrayList<RentabilidadCompania> generarReporte(Long idCompania,String fechaIni, String fechaFin) throws SQLException{
+	public ArrayList<RentabilidadCompania> generarReporte(String nombreCompania,String fechaIni, String fechaFin) throws SQLException{
 		ArrayList<RentabilidadCompania> reportes = new ArrayList<RentabilidadCompania>();
+		
+		String sql2 = "select id from companias where nombre = '"+nombreCompania+"'";
+		PreparedStatement ps = conn.prepareStatement(sql2);
+		System.out.println("sql stm: " + sql2);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		int idCompania = Integer.parseInt(rs.getString("ID"));
+		
 		String sql = "WITH B AS (SELECT * FROM SITIO si INNER JOIN TIPOSITIO ti ON si.ID =ti.ID "
 				+ "INNER JOIN (SELECT ID AS IDFUNCION, IDESPECTACULO, IDSITIO AS ID, DIA FROM FUNCION) fun ON si.ID=fun.ID "
 				+ "NATURAL JOIN (SELECT ID AS IDBOLETA, IDFUNCION, IDESPECTACULO FROM BOLETA WHERE ASISTENCIA ='t') "

@@ -62,9 +62,15 @@ public class DAOAdministrador {
 	}
 	
 	
-	public ArrayList<NotaDebito> cancelarCompania(int idCompania) throws Exception{
+	public ArrayList<NotaDebito> cancelarCompania(String nombreCompania) throws Exception{
 		
 		ArrayList<NotaDebito> notaDebito = new  ArrayList<>();
+		String sql = "select id from companias where nombre = '"+nombreCompania+"'";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		System.out.println("sql stm: " + sql);
+		recursos.add(ps);
+		ResultSet rs = ps.executeQuery();
+		String idCompania = rs.getString("ID");
 		
 		String sql2 = "select * from (funcion natural join compania_espectaculo)where idcompania = '"+idCompania+"'";
 		PreparedStatement ps2 = conn.prepareStatement(sql2);

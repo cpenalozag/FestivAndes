@@ -25,12 +25,17 @@ import com.rabbitmq.jms.admin.RMQDestination;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import jms.RF15;
+import jms.RF16;
+import jms.RFC14;
 import tm.FestivAndesMaster;
 import vos.BoletaConsulta;
 import vos.CompraBoleta;
+import vos.ConsultaRentabilidad;
 import vos.ListaCompraBoleta;
 import vos.ListaRecibo;
+import vos.NotaDebito;
 import vos.Recibo;
+import vos.RentabilidadCompania;
 
 
 public class VideoAndesDistributed 
@@ -47,6 +52,8 @@ public class VideoAndesDistributed
 	private TopicConnectionFactory factory;
 
 	private RF15 rf15;
+	private RF16 rf16;
+	private RFC14 rfc14;
 
 	private static String path;
 
@@ -116,13 +123,29 @@ public class VideoAndesDistributed
 		FestivAndesMaster tm = new FestivAndesMaster(path);
 		return getInstance(tm);
 	}
+	
+	public ArrayList<RentabilidadCompania> getLocalRF14(ConsultaRentabilidad consulta) throws Exception{
+		return tm.generarReporteRentabilidadCompania(consulta.getNombre(), consulta.getRango());
+	}
+	
+	public ArrayList<RentabilidadCompania> getRemoteRF14(ConsultaRentabilidad consulta) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
+		return rfc14.getRemoteRFC14(consulta);	
+	}
 
 	public ArrayList<Recibo> getLocalRF15(ArrayList<CompraBoleta>cbs) throws Exception{
 		return tm.registrarAbono(cbs.get(0).getIdCliente(), cbs);
 	}
+	
 	public ArrayList<Recibo> getRemoteRF15(ArrayList<CompraBoleta>cbs) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
-		return rf15.getRemoteRF15(cbs);
-		
+		return rf15.getRemoteRF15(cbs);	
+	}
+	
+	public ArrayList<NotaDebito> getLocalRF16(String nombreCompania ) throws Exception{
+		return tm.cancelarCompania(nombreCompania);
+	}
+	
+	public ArrayList<NotaDebito> getRemoteRF16(String nombreCompania) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
+		return rf16.getRemoteRF16(nombreCompania);	
 	}
 	
 }
