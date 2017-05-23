@@ -99,7 +99,7 @@ public class RF15 implements MessageListener, ExceptionListener{
 		topicPublisher.publish(txtMsg);
 	}
 	
-	public ArrayList<Recibo> getRemoteRF15(CompraBoleta[]compraBoletas) throws NoSuchAlgorithmException, JsonGenerationException, JsonMappingException, IOException, JMSException, InterruptedException, NonReplyException{
+	public ArrayList<Recibo> getRemoteRF15(ArrayList<CompraBoleta>compraBoletas) throws NoSuchAlgorithmException, JsonGenerationException, JsonMappingException, IOException, JMSException, InterruptedException, NonReplyException{
 		
 		answer.clear();
 		String id = APP+""+System.currentTimeMillis();

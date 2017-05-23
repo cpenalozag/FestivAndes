@@ -119,7 +119,10 @@ public class VideoAndesDistributed
 
 	public ArrayList<Recibo> getLocalRF15(ArrayList<CompraBoleta>cbs) throws Exception{
 		return tm.registrarAbono(cbs.get(0).getIdCliente(), cbs);
-
+	}
+	public ArrayList<Recibo> getRemoteRF15(ArrayList<CompraBoleta>cbs) throws JsonGenerationException, JsonMappingException, NoSuchAlgorithmException, IOException, JMSException, InterruptedException, NonReplyException{
+		return rf15.getRemoteRF15(cbs);
+		
 	}
 	
 }
