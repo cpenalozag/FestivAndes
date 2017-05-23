@@ -55,22 +55,22 @@ public class DAOEspectaculo {
 		this.conn = con;
 	}
 	
-	public FuncionBasica obtenerFuncion (Long idEs, Long idFun, Connection conn) throws SQLException {
-		setConn(conn);
-		FuncionBasica funcion = new FuncionBasica();
-		String sql = "SELECT * FROM FUNCION WHERE ID ='"+idFun+"' AND IDESPECTACULO ='"+idEs+"'";
-		PreparedStatement ps = conn.prepareStatement(sql);
-		recursos.add(ps);
-		ResultSet rs = ps.executeQuery();
-		if (rs.next()){
-			funcion.setDia(rs.getString("DIA"));
-			funcion.setHora(Integer.parseInt(rs.getString("HORA")));
-			funcion.setId(Long.parseLong(rs.getString("ID")));
-			funcion.setEspectaculo(obtenerEspectaculo(idEs, conn));
-			funcion.setSitio(obtenerSitio(Long.parseLong(rs.getString("IDSITIO")), conn));
-		}
-		return funcion;
-	}
+//	public FuncionBasica obtenerFuncion (Long idEs, Long idFun, Connection conn) throws SQLException {
+//		setConn(conn);
+//		FuncionBasica funcion = new FuncionBasica();
+//		String sql = "SELECT * FROM FUNCION WHERE ID ='"+idFun+"' AND IDESPECTACULO ='"+idEs+"'";
+//		PreparedStatement ps = conn.prepareStatement(sql);
+//		recursos.add(ps);
+//		ResultSet rs = ps.executeQuery();
+//		if (rs.next()){
+//			funcion.setDia(rs.getString("DIA"));
+//			funcion.setHora(Integer.parseInt(rs.getString("HORA")));
+//			funcion.setId(Long.parseLong(rs.getString("ID")));
+//			funcion.setEspectaculo(obtenerEspectaculo(idEs, conn));
+//			funcion.setSitio(obtenerSitio(Long.parseLong(rs.getString("IDSITIO")), conn));
+//		}
+//		return funcion;
+//	}
 
 	public EspectaculoBasica obtenerEspectaculo(Long id, Connection conn) throws SQLException{
 		setConn(conn);

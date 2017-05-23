@@ -13,6 +13,7 @@ import vos.Espectaculo;
 import vos.FiltrosConsultaFunciones;
 import vos.Funcion;
 import vos.Funcion2;
+import vos.FuncionBasica;
 import vos.ReporteFuncion;
 import vos.Sitio;
 
@@ -59,8 +60,8 @@ public class DAOFuncion {
 		this.conn = con;
 	}
 	
-	public List<Funcion2> darFuncionesFiltros(FiltrosConsultaFunciones filtro) throws SQLException, ParseException{
-		List<Funcion2> funciones = new ArrayList<>();
+	public List<FuncionBasica> darFuncionesFiltros(FiltrosConsultaFunciones filtro) throws SQLException, ParseException{
+		List<FuncionBasica> funciones = new ArrayList<>();
 		if(filtro.getIdioma() != null){
 			funciones = darFuncionesIdioma(filtro.getIdioma());
 		}else if (filtro.getCategoria() != null){
@@ -75,9 +76,9 @@ public class DAOFuncion {
 		
 	}
 
-	public List<Funcion2> darFuncionesCompania(String nombreCompania) throws SQLException, ParseException
+	public List<FuncionBasica> darFuncionesCompania(String nombreCompania) throws SQLException, ParseException
 	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		List<FuncionBasica> funciones = new ArrayList<FuncionBasica>();
 		String sql = "SELECT * FROM("
 				+ "(SELECT * FROM ("
 				+ "(select IDESPECTACULO, NOMBRECOM, NOMBREESP from( "
@@ -96,7 +97,7 @@ public class DAOFuncion {
 
 		while(rs.next())
 		{
-			Funcion2 n = new Funcion2();
+			FuncionBasica n = new FuncionBasica();
 			Espectaculo esp = new Espectaculo();
 			Sitio sit = new Sitio();
 			SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yy");
@@ -106,30 +107,36 @@ public class DAOFuncion {
 //			esp.setId(Long.parseLong(rs.getString("IDESPECTACULO")));
 //			esp.setNombre(rs.getString("NOMBREESP"));
 			n.setId(Long.parseLong(rs.getString("ID")));
-			n.setEspectaculo(rs.getString("NOMBREESP"));
-			n.setEspectaculoId(Long.parseLong(rs.getString("IDESPECTACULO")));
-			n.setSitio(rs.getString("NOMBRESITIO"));
-			fecha = formato.parse(rs.getString("DIA"));
-			n.setDia(fecha);
-			n.setHora(Integer.parseInt(rs.getString("HORA")));
 			
-			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
-			System.out.println("slq stm: "+ sql2);
-			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
-			recursos.add(prepStmt2);
-			ResultSet rs2 = prepStmt2.executeQuery();
-			if(rs2.next()){
-				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
-				}
+			n.setEspectaculo(Integer.parseInt(rs.getString("IDESPECTACULO")));
+			n.setSitio(Integer.parseInt(rs.getString("IDSITIO")));
+//			n.setEspectaculo(rs.getString("NOMBREESP"));
+//			n.setEspectaculoId(Long.parseLong(rs.getString("IDESPECTACULO")));
+//			n.setSitio(rs.getString("NOMBRESITIO"));
+			
+			
+//			fecha = formato.parse(rs.getString("DIA"));
+			
+			n.setDia(rs.getString("DIA"));
+			n.setHora(Integer.parseInt(rs.getString("HORA")));
+//			
+//			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
+//			System.out.println("slq stm: "+ sql2);
+//			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+//			recursos.add(prepStmt2);
+//			ResultSet rs2 = prepStmt2.executeQuery();
+//			if(rs2.next()){
+//				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
+//				}
 			funciones.add(n);
 		}
 		return funciones;
 
 	}
 
-	public List<Funcion2> darFuncionesIdioma(String idioma) throws SQLException, ParseException
+	public List<FuncionBasica> darFuncionesIdioma(String idioma) throws SQLException, ParseException
 	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		List<FuncionBasica> funciones = new ArrayList<FuncionBasica>();
 		String sql = "SELECT ID,DIA,HORA,NOMBREESPC,IDIOMA,NOMBRELUGAR, IDSITIO, IDESPECTACULO FROM("
 				+ "(SELECT * FROM("
 				+ "(select * from FUNCION ) "
@@ -143,7 +150,7 @@ public class DAOFuncion {
 
 		while(rs.next())
 		{
-			Funcion2 n = new Funcion2();
+			FuncionBasica n = new FuncionBasica();
 			Espectaculo esp = new Espectaculo();
 			Sitio sit = new Sitio();
 			SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yy");
@@ -153,30 +160,31 @@ public class DAOFuncion {
 //			esp.setId(Long.parseLong(rs.getString("IDESPECTACULO")));
 //			esp.setNombre(rs.getString("NOMBREESPC"));
 			n.setId(Long.parseLong(rs.getString("ID")));
-			n.setEspectaculo(rs.getString("NOMBREESPC"));
-			n.setSitio(rs.getString("NOMBRELUGAR"));
-			fecha = formato.parse(rs.getString("DIA"));
-			n.setDia(fecha);
+			n.setEspectaculo(Integer.parseInt(rs.getString("IDESPECTACULO")));
+//			n.setSitio(rs.getString("NOMBRELUGAR"));
+			n.setSitio(Integer.parseInt(rs.getString("IDSITIO")));
+//			fecha = formato.parse(rs.getString("DIA"));
+			n.setDia(rs.getString("DIA"));
 			n.setHora(Integer.parseInt(rs.getString("HORA")));
 			
-			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
-			System.out.println("slq stm: "+ sql2);
-			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
-			recursos.add(prepStmt2);
-			ResultSet rs2 = prepStmt2.executeQuery();
-			if(rs2.next()){
-				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
-				}
+//			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
+//			System.out.println("slq stm: "+ sql2);
+//			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+//			recursos.add(prepStmt2);
+//			ResultSet rs2 = prepStmt2.executeQuery();
+//			if(rs2.next()){
+//				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
+//				}
 			funciones.add(n);
 		}
 		return funciones;
 	}
 
-	public List<Funcion2> darFuncionesFecha(String fechaInicial, String fechaFinal) throws SQLException, ParseException
+	public List<FuncionBasica> darFuncionesFecha(String fechaInicial, String fechaFinal) throws SQLException, ParseException
 	{
 //		SimpleDateFormat formato = new SimpleDateFormat("dd/mm/yy");
 //		String fechaString = formato.format(fecha);
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		List<FuncionBasica> funciones = new ArrayList<FuncionBasica>();
 //		System.out.println(fechaString);
 		String sql ="SELECT ID,DIA,HORA,NOMBREESPC,IDIOMA,NOMBRELUGAR,IDSITIO,IDESPECTACULO FROM"
 				+ "((SELECT * FROM((select * from FUNCION ) NATURAL JOIN(SELECT ID AS IDESPECTACULO, NOMBRE AS NOMBREESPC, "
@@ -190,7 +198,7 @@ public class DAOFuncion {
 
 		while(rs.next())
 		{
-			Funcion2 n = new Funcion2();
+			FuncionBasica n = new FuncionBasica();
 			Espectaculo esp = new Espectaculo();
 			Sitio sit = new Sitio();
 			Date fecha2 = new Date();
@@ -198,27 +206,34 @@ public class DAOFuncion {
 //			sit.setNombre(rs.getString("NOMBRELUGAR"));
 //			esp.setId(Long.parseLong(rs.getString("IDESPECTACULO")));
 //			esp.setNombre(rs.getString("NOMBREESPC"));
+//			n.setId(Long.parseLong(rs.getString("ID")));
+//			n.setEspectaculo(rs.getString("NOMBREESPC"));
+			
 			n.setId(Long.parseLong(rs.getString("ID")));
-			n.setEspectaculo(rs.getString("NOMBREESPC"));
-			n.setSitio(rs.getString("NOMBRELUGAR"));
+			n.setEspectaculo(Integer.parseInt(rs.getString("IDESPECTACULO")));
+			
+//			n.setSitio(rs.getString("NOMBRELUGAR"));
+			n.setSitio(Integer.parseInt(rs.getString("IDSITIO")));
 //			fecha2 = formato.parse(rs.getString("DIA"));
-			n.setDia(fecha2);
+			n.setDia(rs.getString("DIA"));
 			n.setHora(Integer.parseInt(rs.getString("HORA")));
-			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
-			System.out.println("slq stm: "+ sql2);
-			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
-			recursos.add(prepStmt2);
-			ResultSet rs2 = prepStmt2.executeQuery();
-			if(rs2.next()){
-				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
-				}
+			
+			
+//			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
+//			System.out.println("slq stm: "+ sql2);
+//			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+//			recursos.add(prepStmt2);
+//			ResultSet rs2 = prepStmt2.executeQuery();
+//			if(rs2.next()){
+//				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
+//				}
 			funciones.add(n);
 		}
 		return funciones;
 	}
-	public List<Funcion2> darFuncionesCategoria(String categoria) throws SQLException, ParseException
+	public List<FuncionBasica> darFuncionesCategoria(String categoria) throws SQLException, ParseException
 	{
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		List<FuncionBasica> funciones = new ArrayList<FuncionBasica>();
 		String sql = "SELECT * FROM("
 				+ "SELECT* FROM("
 				+ "SELECT * FROM("
@@ -236,7 +251,7 @@ public class DAOFuncion {
 		ResultSet rs = prepStmt.executeQuery();
 		while(rs.next())
 		{
-			Funcion2 n = new Funcion2();
+			FuncionBasica n = new FuncionBasica();
 			Espectaculo esp = new Espectaculo();
 			Sitio sit = new Sitio();
 			SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yy");
@@ -245,33 +260,41 @@ public class DAOFuncion {
 //			sit.setNombre(rs.getString("NOMBRESITIO"));
 //			esp.setId(Long.parseLong(rs.getString("IDESPECTACULO")));
 //			esp.setNombre(rs.getString("NOMBREESP"));
+//			n.setId(Long.parseLong(rs.getString("ID")));
+//			n.setEspectaculo(rs.getString("NOMBREESP"));
+			
 			n.setId(Long.parseLong(rs.getString("ID")));
-			n.setEspectaculo(rs.getString("NOMBREESP"));
-			n.setSitio(rs.getString("NOMBRESITIO"));
+			n.setEspectaculo(Integer.parseInt(rs.getString("IDESPECTACULO")));
+			
+//			n.setSitio(rs.getString("NOMBRESITIO"));
+			n.setSitio(Integer.parseInt(rs.getString("IDSITIO")));
+			
 			fecha = formato.parse(rs.getString("DIA"));
-			n.setDia(fecha);
+			n.setDia(rs.getString("DIA"));
+			
 			n.setHora(Integer.parseInt(rs.getString("HORA")));
-			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
-			System.out.println("slq stm: "+ sql2);
-			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
-			recursos.add(prepStmt2);
-			ResultSet rs2 = prepStmt2.executeQuery();
-			if(rs2.next()){
-				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
-				}
+			
+//			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
+//			System.out.println("slq stm: "+ sql2);
+//			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+//			recursos.add(prepStmt2);
+//			ResultSet rs2 = prepStmt2.executeQuery();
+//			if(rs2.next()){
+//				n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
+//				}
 			funciones.add(n);
 		}
 		return funciones;
 	}
 	
-	public List<Funcion2> darFuncionesTraducidas(Boolean tradu) throws SQLException, ParseException
+	public List<FuncionBasica> darFuncionesTraducidas(Boolean tradu) throws SQLException, ParseException
 	{
 		String resp = "";
 		if(tradu)
 			resp = "t";
 		else
 			resp = "f";
-		List<Funcion2> funciones = new ArrayList<Funcion2>();
+		List<FuncionBasica> funciones = new ArrayList<FuncionBasica>();
 		String sql = "SELECT ID, DIA, HORA, OTROIDIOMA, NOMBREESPC, NOMBRESITIO, IDSITIO, IDESPECTACULO FROM (SELECT * FROM ("
 				+ "(SELECT * FROM FUNCION)"
 				+ "NATURAL JOIN  (SELECT ID AS IDESPECTACULO, OTROIDIOMA, NOMBRE AS NOMBREESPC FROM ESPECTACULO))"
@@ -283,7 +306,7 @@ public class DAOFuncion {
 		ResultSet rs = prepStmt.executeQuery();
 		while(rs.next())
 		{
-			Funcion2 n = new Funcion2();
+			FuncionBasica n = new FuncionBasica();
 			Espectaculo esp = new Espectaculo();
 			Sitio sit = new Sitio();
 			SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yy");
@@ -293,19 +316,28 @@ public class DAOFuncion {
 			esp.setId(Long.parseLong(rs.getString("IDESPECTACULO")));
 			esp.setNombre(rs.getString("NOMBREESPC"));
 			n.setId(Long.parseLong(rs.getString("ID")));
-			n.setEspectaculo(rs.getString("NOMBREESPC"));
-			n.setSitio(rs.getString("NOMBRESITIO"));
-			fecha = formato.parse(rs.getString("DIA"));
-			n.setDia(fecha);
+			
+			
+//			n.setEspectaculo(rs.getString("NOMBREESPC"));
+//			n.setSitio(rs.getString("NOMBRESITIO"));
+			
+			n.setEspectaculo(Integer.parseInt(rs.getString("IDESPECTACULO")));
+			n.setSitio(Integer.parseInt(rs.getString("IDSITIO")));
+			
+//			fecha = formato.parse(rs.getString("DIA"));
+			
+			n.setDia(rs.getString("DIA"));
+			
 			n.setHora(Integer.parseInt(rs.getString("HORA")));
-			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
-			System.out.println("slq stm: "+ sql2);
-			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
-			recursos.add(prepStmt2);
-			ResultSet rs2 = prepStmt2.executeQuery();
-			if(rs2.next()){
-			n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
-			}
+			
+//			String sql2 = "select IDUSUARIO FROM operador where IDFUNCION = '"+ rs.getString("ID")+ "' AND IDESPECTACULO ='" +rs.getString("IDESPECTACULO")+"'";
+//			System.out.println("slq stm: "+ sql2);
+//			PreparedStatement prepStmt2 = conn.prepareStatement(sql2);
+//			recursos.add(prepStmt2);
+//			ResultSet rs2 = prepStmt2.executeQuery();
+//			if(rs2.next()){
+//			n.setOperadorLogico(Long.parseLong(rs2.getString("IDUSUARIO")));
+//			}
 
 			funciones.add(n);
 		}

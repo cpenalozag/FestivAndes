@@ -145,17 +145,17 @@ public class RF15 implements MessageListener, ExceptionListener{
 			{
 				if(ex.getStatus().equals(REQUEST))
 				{
-					BoletaConsulta rf15 = mapper.readValue(ex.getPayload(), BoletaConsulta.class);
-					VideoAndesDistributed dtm = VideoAndesDistributed.getInstance();
-					ListaVuelosComun vuelos = dtm.getLocalArribosSalidas(rfc11);
-					String payload = mapper.writeValueAsString(vuelos);
-					Topic t = new RMQDestination("", "RFC11.test", ex.getRoutingKey(), "", false);
-					sendMessage(payload, REQUEST_ANSWER, t, id);
+//					BoletaConsulta rf15 = mapper.readValue(ex.getPayload(), BoletaConsulta.class);
+//					VideoAndesDistributed dtm = VideoAndesDistributed.getInstance();
+//					ListaVuelosComun vuelos = dtm.getLocalArribosSalidas(rfc11);
+//					String payload = mapper.writeValueAsString(vuelos);
+//					Topic t = new RMQDestination("", "RFC11.test", ex.getRoutingKey(), "", false);
+//					sendMessage(payload, REQUEST_ANSWER, t, id);
 				}
 				else if(ex.getStatus().equals(REQUEST_ANSWER))
 				{
-					ListaVuelosComun v = mapper.readValue(ex.getPayload(), ListaVuelosComun.class);
-					answer.addAll(v.listaVuelos);
+//					ListaVuelosComun v = mapper.readValue(ex.getPayload(), ListaVuelosComun.class);
+//					answer.addAll(v.listaVuelos);
 				}
 			}
 
