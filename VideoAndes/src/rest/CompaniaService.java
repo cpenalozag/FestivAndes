@@ -41,17 +41,17 @@ public class CompaniaService {
 		return "{ \"ERROR\": \""+ e.getMessage() + "\"}" ;
 	}
 	
-	@Path("/{idCompania}/rentabilidad")
+	@Path("/{nombreCompania}/rentabilidad")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response rentabilidadesCompania(@PathParam("idCompania") long idCompania, RangoFechas rango)
+	public Response rentabilidadesCompania(@PathParam("nombreCompania") String nombreCompania, RangoFechas rango)
 	{
 		ArrayList<RentabilidadCompania> rentabilidad = new ArrayList<>();
 		FestivAndesMaster tm = new FestivAndesMaster(getPath());
 		try{
 			
-			rentabilidad = tm.generarReporteRentabilidadCompania(idCompania, rango);
+			rentabilidad = tm.generarReporteRentabilidadCompania(nombreCompania, rango);
 		}catch (Exception e) {
 			// TODO: handle exception
 			return Response.status(500).entity(doErrorMessage(e)).build();

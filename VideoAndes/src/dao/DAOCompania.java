@@ -51,54 +51,56 @@ public class DAOCompania {
 	public void setConn(Connection con){
 		this.conn = con;
 	}
-	
+
 
 	public ArrayList<RentabilidadCompania> generarReporte(String nombreCompania,String fechaIni, String fechaFin) throws SQLException{
 		ArrayList<RentabilidadCompania> reportes = new ArrayList<RentabilidadCompania>();
-		
+
 		String sql2 = "select id from companias where nombre = '"+nombreCompania+"'";
 		PreparedStatement ps = conn.prepareStatement(sql2);
-		System.out.println("sql stm: " + sql2);
 		recursos.add(ps);
 		ResultSet rs = ps.executeQuery();
-		int idCompania = Integer.parseInt(rs.getString("ID"));
-		
-		String sql = "WITH B AS (SELECT * FROM SITIO si INNER JOIN TIPOSITIO ti ON si.ID =ti.ID "
-				+ "INNER JOIN (SELECT ID AS IDFUNCION, IDESPECTACULO, IDSITIO AS ID, DIA FROM FUNCION) fun ON si.ID=fun.ID "
-				+ "NATURAL JOIN (SELECT ID AS IDBOLETA, IDFUNCION, IDESPECTACULO FROM BOLETA WHERE ASISTENCIA ='t') "
-				+ "NATURAL JOIN (SELECT ID AS IDBOLETA, IDSITIO, IDSILLA FROM BOLETA_SILLA) "
-				+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
-				+ "NATURAL JOIN (SELECT ID AS IDLOCALIDAD, IDSITIO, PRECIO FROM LOCALIDAD)) , "
-				+ "BONO1 AS(SELECT DIA,IDSITIO,TIPO, IDCOMPANIA, IDESPECTACULO, IDFUNCION, COUNT (IDFUNCION) AS CANTFUNCION, CAPACIDAD, SUM (PRECIO) AS VENDIDO, CATEGORIA "
-				+ "FROM B NATURAL JOIN (SELECT ID AS IDESPECTACULO, TIPO AS CATEGORIA FROM CATEGORIA) "
-				+ "NATURAL JOIN COMPANIA_ESPECTACULO GROUP BY  DIA, IDSITIO,TIPO, IDCOMPANIA, IDESPECTACULO, IDFUNCION, CAPACIDAD, CATEGORIA)"
-				+ " , FIN AS (SELECT DIA, IDSITIO, TIPO, IDESPECTACULO, CATEGORIA, IDFUNCION, CANTFUNCION, CANTFUNCION/CAPACIDAD, VENDIDO "
-				+ "FROM BONO1 WHERE IDCOMPANIA ='"+idCompania+"' AND DIA BETWEEN TO_DATE('"+fechaIni+"', 'mm/dd/yy') "
-				+ "AND TO_DATE('"+fechaFin+"', 'mm/dd/yy') "
-				+ "ORDER BY VENDIDO DESC) "
-				+ "SELECT * FROM FIN "
-				+ "LEFT JOIN (SELECT ID AS IDESPECTACULO, NOMBRE FROM ESPECTACULO) esp "
-				+ "ON FIN.IDESPECTACULO=ESP.IDESPECTACULO";
-		
-		PreparedStatement ps1 = conn.prepareStatement(sql);
+		if (rs.next()){
+			int idCompania = Integer.parseInt(rs.getString("ID"));
 
-		recursos.add(ps1);
-		ResultSet rs1 = ps1.executeQuery();
-		while(rs1.next()){
-			RentabilidadCompania reporte = new RentabilidadCompania();
-			reporte.setCantidadBoletas(Integer.parseInt(rs1.getString("CANTFUNCION")));
-			reporte.setCategoria(rs1.getString("CATEGORIA"));
-			reporte.setFecha(rs1.getString("DIA"));
-			reporte.setIdEspectaculo(Integer.parseInt(rs1.getString("IDESPECTACULO")));
-			reporte.setIdFuncion(Integer.parseInt(rs1.getString("IDFUNCION")));
-			reporte.setIdsitio(Integer.parseInt(rs1.getString("IDSITIO")));
-			reporte.setProporcionAsistencia(Double.parseDouble(rs1.getString("CANTFUNCION/CAPACIDAD")));
-			reporte.setTipositio(Integer.parseInt(rs1.getString("TIPO")));
-			reporte.setTotalVendido(Double.parseDouble(rs1.getString("VENDIDO")));
-			reportes.add(reporte);
+
+			String sql = "WITH B AS (SELECT * FROM SITIO si INNER JOIN TIPOSITIO ti ON si.ID =ti.ID "
+					+ "INNER JOIN (SELECT ID AS IDFUNCION, IDESPECTACULO, IDSITIO AS ID, DIA FROM FUNCION) fun ON si.ID=fun.ID "
+					+ "NATURAL JOIN (SELECT ID AS IDBOLETA, IDFUNCION, IDESPECTACULO FROM BOLETA WHERE ASISTENCIA ='t') "
+					+ "NATURAL JOIN (SELECT ID AS IDBOLETA, IDSITIO, IDSILLA FROM BOLETA_SILLA) "
+					+ "NATURAL JOIN (SELECT ID AS IDSILLA, IDSITIO, IDLOCALIDAD FROM SILLA) "
+					+ "NATURAL JOIN (SELECT ID AS IDLOCALIDAD, IDSITIO, PRECIO FROM LOCALIDAD)) , "
+					+ "BONO1 AS(SELECT DIA,IDSITIO,TIPO, IDCOMPANIA, IDESPECTACULO, IDFUNCION, COUNT (IDFUNCION) AS CANTFUNCION, CAPACIDAD, SUM (PRECIO) AS VENDIDO, CATEGORIA "
+					+ "FROM B NATURAL JOIN (SELECT ID AS IDESPECTACULO, TIPO AS CATEGORIA FROM CATEGORIA) "
+					+ "NATURAL JOIN COMPANIA_ESPECTACULO GROUP BY  DIA, IDSITIO,TIPO, IDCOMPANIA, IDESPECTACULO, IDFUNCION, CAPACIDAD, CATEGORIA)"
+					+ " , FIN AS (SELECT DIA, IDSITIO, TIPO, IDESPECTACULO, CATEGORIA, IDFUNCION, CANTFUNCION, CANTFUNCION/CAPACIDAD, VENDIDO "
+					+ "FROM BONO1 WHERE IDCOMPANIA ='"+idCompania+"' AND DIA BETWEEN TO_DATE('"+fechaIni+"', 'mm/dd/yy') "
+					+ "AND TO_DATE('"+fechaFin+"', 'mm/dd/yy') "
+					+ "ORDER BY VENDIDO DESC) "
+					+ "SELECT * FROM FIN "
+					+ "LEFT JOIN (SELECT ID AS IDESPECTACULO, NOMBRE FROM ESPECTACULO) esp "
+					+ "ON FIN.IDESPECTACULO=ESP.IDESPECTACULO";
+			System.out.println("sql stm: " + sql);
+			PreparedStatement ps1 = conn.prepareStatement(sql);
+
+			recursos.add(ps1);
+			ResultSet rs1 = ps1.executeQuery();
+			while(rs1.next()){
+				RentabilidadCompania reporte = new RentabilidadCompania();
+				reporte.setCantidadBoletas(Integer.parseInt(rs1.getString("CANTFUNCION")));
+				reporte.setCategoria(rs1.getString("CATEGORIA"));
+				reporte.setFecha(rs1.getString("DIA"));
+				reporte.setIdEspectaculo(Integer.parseInt(rs1.getString("IDESPECTACULO")));
+				reporte.setIdFuncion(Integer.parseInt(rs1.getString("IDFUNCION")));
+				reporte.setIdsitio(Integer.parseInt(rs1.getString("IDSITIO")));
+				reporte.setProporcionAsistencia(Double.parseDouble(rs1.getString("CANTFUNCION/CAPACIDAD")));
+				reporte.setTipositio(Integer.parseInt(rs1.getString("TIPO")));
+				reporte.setTotalVendido(Double.parseDouble(rs1.getString("VENDIDO")));
+				reportes.add(reporte);
+			}
 		}
 		return reportes;
 	}
-	
-	
+
+
 }
