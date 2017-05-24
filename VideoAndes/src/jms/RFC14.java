@@ -179,6 +179,7 @@ public class RFC14 implements MessageListener, ExceptionListener {
 	
 	public void onException(JMSException arg0) {
 		// TODO Auto-generated method stub
+		System.out.println(arg0);
 		
 	}
 }

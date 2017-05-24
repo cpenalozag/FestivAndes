@@ -182,6 +182,7 @@ public class RF16 implements MessageListener, ExceptionListener {
 	@Override
 	public void onException(JMSException arg0) {
 		// TODO Auto-generated method stub
+		System.out.println(arg0);
 		
 	}
 
